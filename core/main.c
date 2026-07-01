@@ -49,14 +49,6 @@ void timer1_delay(uint32_t ms)
 }
 */
 
-
-
-
-
-uint8_t tx_buffer[3]; 
-
-uint8_t rx_buffer[3]; 
-uint8_t bcd_buffer[3]; 
 uint8_t time_buffer[3]; 
 
 int main(void) {
@@ -64,16 +56,9 @@ int main(void) {
     // Initialize Peripherals
     mcu_init();
     UART1_Init();
-
-//    BareMetal_I2C1_Init();
     i2c_init();
-    
-    tx_buffer[0] = 0x04;
-    tx_buffer[1] = 0x01;
-    tx_buffer[2] = 0x0f;
-    i2c_read_mem(PCF8563_7BIT_ADDR, 0x02, 3, rx_buffer);
     set_rtc_time(30, 15, 10);
-    i2c_read_mem(PCF8563_7BIT_ADDR, 0x02, 3, rx_buffer);
+    
     tim2_init();
     fifo_test();
     random_test();
@@ -85,7 +70,6 @@ int main(void) {
         tim2_delay_ms(500);
         printf("while loop\n");
         get_rtc_time(time_buffer);
-        i2c_read_mem(PCF8563_7BIT_ADDR, REG_VL_SECONDS, 3, rx_buffer);
     }
 
     return 0;
