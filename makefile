@@ -43,6 +43,7 @@ core/syscalls.c \
 drivers/mcu/mcu.c \
 drivers/timers/timer.c \
 drivers/i2c/i2c.c \
+drivers/adc.c \
 middleware/rtc.c \
 utils/fifo/fifo.c \
 utils/fifo/fifo_test.c \
@@ -111,6 +112,7 @@ C_INCLUDES =  \
 -Idrivers/mcu \
 -Idrivers/timers \
 -Idrivers/i2c \
+-Idrivers \
 -Imiddleware \
 -Iutils/fifo \
 -Iutils/random \
