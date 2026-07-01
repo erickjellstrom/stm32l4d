@@ -1,0 +1,37 @@
+
+name: STM32L4 Build Pipeline
+
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Install Toolchain and Make
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gcc-arm-none-eabi make
+
+    - name: Compile Firmware
+      run: make all
+
+    - name: Archive Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: stm32l4-firmware
+        path: |
+          build/*.bin
+          build/*.hex
+          build/*.elf
+        if-no-files-found: error
+
+
+
