@@ -1,6 +1,7 @@
 
 #include "stm32l4xx.h"
 #include <stdint.h>
+#include "i2c.h"
 
 #define PCF8563_7BIT_ADDR  0x51
 
@@ -42,107 +43,121 @@ void i2c_init(void) {
     I2C1->CR1 |= I2C_CR1_PE;  
 }
 
-void i2c_transmit(uint8_t target_addr_7bit, uint8_t *data, uint8_t size) {
-    while (I2C1->ISR & I2C_ISR_BUSY);
-
-    I2C1->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND);
-    
-    // Explicitly mask and position address fields safely
-    I2C1->CR2 |= (((uint32_t)target_addr_7bit << 1) & I2C_CR2_SADD); 
-    I2C1->CR2 |= (((uint32_t)size << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES);          
-    I2C1->CR2 |= I2C_CR2_AUTOEND; 
-    I2C1->CR2 |= I2C_CR2_START;   
-
-    for (uint8_t i = 0; i < size; i++) {
-        // FIX: Prevent lockups by monitoring the NACK flag alongside TXIS
-        while (!(I2C1->ISR & I2C_ISR_TXIS)) {
-            if (I2C1->ISR & I2C_ISR_NACKF) {
-                I2C1->ICR = I2C_ICR_NACKCF; // Clear NACK flag
-                return; // Exit gracefully instead of deadlocking
-            }
-        }
-        I2C1->TXDR = data[i]; 
-    }
-
-    while (!(I2C1->ISR & I2C_ISR_STOPF));
-    I2C1->ICR = I2C_ICR_STOPCF; 
-}
-
-void i2c_receive(uint8_t target_addr_7bit, uint8_t *data, uint8_t size) {
-    I2C1->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND);
-    
-    I2C1->CR2 |= (((uint32_t)target_addr_7bit << 1) & I2C_CR2_SADD); 
-    I2C1->CR2 |= (((uint32_t)size << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES);         
-    I2C1->CR2 |= I2C_CR2_RD_WRN;                     
-    I2C1->CR2 |= I2C_CR2_AUTOEND;             
-    I2C1->CR2 |= I2C_CR2_START;    
-
-    for (uint8_t i = 0; i < size; i++) {
-        while (!(I2C1->ISR & I2C_ISR_RXNE)) {
-            if (I2C1->ISR & I2C_ISR_NACKF) {
-                I2C1->ICR = I2C_ICR_NACKCF;
-                return;
-            }
-        }
-        data[i] = I2C1->RXDR; 
-    }
-
-    while (!(I2C1->ISR & I2C_ISR_STOPF));
-    I2C1->ICR = I2C_ICR_STOPCF; 
-}
-
-void i2c_read_mem(uint8_t addr, uint8_t reg, uint8_t nbytes, uint8_t *rx_buffer)
+/**
+ * @brief Phase 1: Begins an I2C transaction in Write mode.
+ */
+void proto_i2c_write_start(uint8_t dev_addr, uint8_t nbytes)
 {
     while (I2C1->ISR & I2C_ISR_BUSY);
 
-    I2C1->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND);
+    // Clear settings, ensure AUTOEND and RELOAD are turned off
+    I2C1->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND | I2C_CR2_RELOAD);
     
-    // FIX: Force casting to 32-bit width to avoid compiler trimming optimization bugs
-    I2C1->CR2 |= (((uint32_t)addr << 1) & I2C_CR2_SADD) | 
-                 (((uint32_t)1 << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES) | 
-                 I2C_CR2_START;
-    
-    while (!(I2C1->ISR & I2C_ISR_TXIS)) {
-        if (I2C1->ISR & I2C_ISR_NACKF) {
-            I2C1->ICR = I2C_ICR_NACKCF;
-            return;
-        }
-    }
+    I2C1->CR2 |= (((uint32_t)dev_addr << 1) & I2C_CR2_SADD); 
+    I2C1->CR2 &= ~I2C_CR2_RD_WRN; // Write mode
+    I2C1->CR2 |= ((uint32_t)nbytes << I2C_CR2_NBYTES_Pos);          
 
-    I2C1->TXDR = reg;          
-    while (!(I2C1->ISR & I2C_ISR_TC)); // Wait until Transfer Complete (TC) flags
-
-    // Read Phase (Harvest Data Elements over Repeated START)
-    i2c_receive(addr, rx_buffer, nbytes);
+    I2C1->CR2 |= I2C_CR2_START;   
 }
 
-void i2c_write_mem(uint8_t addr, uint8_t reg, uint8_t *data, uint8_t nbytes) {
-    while (I2C1->ISR & I2C_ISR_BUSY);
-
-    I2C1->CR2 &= ~(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND);
-    
-    // Total size is: 1 byte (for register pointer) + data bytes
-    uint32_t total_size = nbytes + 1;
-
-    I2C1->CR2 |= (((uint32_t)addr << 1) & I2C_CR2_SADD); 
-    I2C1->CR2 |= ((total_size << I2C_CR2_NBYTES_Pos) & I2C_CR2_NBYTES);          
-    I2C1->CR2 |= I2C_CR2_AUTOEND; 
-    I2C1->CR2 |= I2C_CR2_START;   
-
-    // Byte 1: Transmit the target register location pointer
-    while (!(I2C1->ISR & I2C_ISR_TXIS)) {
-        if (I2C1->ISR & I2C_ISR_NACKF) { I2C1->ICR = I2C_ICR_NACKCF; return; }
-    }
-    I2C1->TXDR = reg;
-
-    // Bytes 2+: Transmit the payload buffer elements
-    for (uint8_t i = 0; i < nbytes; i++) {
+/**
+ * @brief Phase 2: Sends data bytes and stretches SCL when finished.
+ */
+void proto_i2c_write_data(uint8_t *data, uint32_t nbytes)
+{
+    for (uint32_t i = 0; i < nbytes; i++) 
+    {
         while (!(I2C1->ISR & I2C_ISR_TXIS)) {
             if (I2C1->ISR & I2C_ISR_NACKF) { I2C1->ICR = I2C_ICR_NACKCF; return; }
         }
-        I2C1->TXDR = data[i]; 
+        I2C1->TXDR = data[i];
     }
 
+    // Wait until all specified bytes are sent. Hardware will now stretch SCL.
+    while (!(I2C1->ISR & I2C_ISR_TC));
+}
+
+/**
+ * @brief Phase 3: Generates a Repeated Start condition to switch to Read mode.
+ */
+void proto_i2c_repeated_start_read(uint8_t dev_addr, uint8_t nbytes)
+{
+    // Modify CR2 for reading (keep AUTOEND and RELOAD turned off)
+    I2C1->CR2 &= ~(I2C_CR2_NBYTES | I2C_CR2_RD_WRN | I2C_CR2_AUTOEND | I2C_CR2_RELOAD);
+    I2C1->CR2 |= (((uint32_t)dev_addr << 1) & I2C_CR2_SADD); 
+    I2C1->CR2 |= I2C_CR2_RD_WRN;                               // Change to Read mode
+    I2C1->CR2 |= ((uint32_t)nbytes << I2C_CR2_NBYTES_Pos);    
+
+    // Writing START while TC is active forces a RESTART
+    I2C1->CR2 |= I2C_CR2_START;
+}
+
+/**
+ * @brief Phase 4: Reads a single byte from the I2C receive buffer.
+ */
+uint8_t proto_i2c_read_byte(void)
+{
+    // Wait for the Receive Not Empty flag
+    while (!(I2C1->ISR & I2C_ISR_RXNE)) {
+        if (I2C1->ISR & I2C_ISR_NACKF) { I2C1->ICR = I2C_ICR_NACKCF; return 0; }
+    }
+    
+    return (uint8_t)I2C1->RXDR;
+}
+
+/**
+ * @brief Phase 5: Closes the transaction manually by generating a STOP condition.
+ */
+void proto_i2c_stop(void)
+{
+    // Wait for the final read transfer to complete completely
+    while (!(I2C1->ISR & I2C_ISR_TC));
+
+    // Generate manual STOP
+    I2C1->CR2 |= I2C_CR2_STOP;
+
+    // Clear the STOP flag once acknowledged by hardware
     while (!(I2C1->ISR & I2C_ISR_STOPF));
-    I2C1->ICR = I2C_ICR_STOPCF; 
+    I2C1->ICR = I2C_ICR_STOPCF;
+}
+
+void read_sensor_registers(uint8_t dev_addr, uint8_t reg_addr, uint8_t *rx_buffer, uint8_t length)
+{
+    // 1. Start write phase (expecting 1 byte of data: the register address)
+    proto_i2c_write_start(dev_addr, 1);
+
+    // 2. Write the register address (this will stretch the SCL line when done)
+    proto_i2c_write_data(&reg_addr, 1);
+
+    // 3. Issue Repeated Start and configure hardware to expect 'length' bytes
+    proto_i2c_repeated_start_read(dev_addr, length);
+
+    // 4. Cleanly read the bytes one by one at the application layer
+    for (uint8_t i = 0; i < length; i++) {
+        rx_buffer[i] = proto_i2c_read_byte();
+    }
+
+    // 5. Manually send the STOP condition to free the bus
+    proto_i2c_stop();
+}
+
+
+void write_sensor_registers(uint8_t dev_addr, uint8_t reg_addr, uint8_t reg_addr_len, uint8_t *data, uint8_t data_len)
+{
+    uint8_t tx_buffer[10];
+    for (int i=0; i<reg_addr_len; i++) {
+        tx_buffer[i] = reg_addr;
+    }
+    for (int i=0; i<data_len; i++) {
+        tx_buffer[reg_addr_len+i] = data[i];
+    }
+    
+    // 1. Start write phase (expecting 1 byte of data: the register address)
+    proto_i2c_write_start(dev_addr, reg_addr_len + data_len);
+
+    // 2. Write the register address (this will stretch the SCL line when done)
+    proto_i2c_write_data(tx_buffer, reg_addr_len + data_len);
+    
+    // 5. Manually send the STOP condition to free the bus
+    proto_i2c_stop();
 }

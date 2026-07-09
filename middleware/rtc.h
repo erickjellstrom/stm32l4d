@@ -1,4 +1,5 @@
 #include <stdint.h>
+#include "i2c.h"
 
 #define PCF8563_7BIT_ADDR    0x51  
 #define REG_VL_SECONDS       0x02
