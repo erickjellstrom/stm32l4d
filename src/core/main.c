@@ -16,7 +16,7 @@ int main(void) {
     mcu_init();
     UART1_Init();
     i2c_init();
-    set_rtc_time(30, 15, 1);
+    set_rtc_time(30, 15, 3);
     
     tim2_init();
     fifo_test();
