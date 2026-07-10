@@ -3,7 +3,6 @@
 #include "tx_api.h"
 #include "tx_app.h"
 #include "tests.h"
-#include "i2c.h"
 #include "rtc.h"
 #include "adc.h"
 
@@ -17,7 +16,7 @@ int main(void) {
     mcu_init();
     UART1_Init();
     i2c_init();
-    set_rtc_time(30, 15, 10);
+    set_rtc_time(30, 15, 3);
     
     tim2_init();
     fifo_test();
