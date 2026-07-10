@@ -36,6 +36,7 @@ THREADX_DIR = src/threadx
 ######################################
 # C sources
 C_SOURCES =  \
+<<<<<<< HEAD
 src/core/main.c \
 src/core/system_stm32l4xx.c \
 src/core/sysmem.c \
@@ -48,6 +49,20 @@ src/middleware/rtc.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
 src/utils/random/random.c \
+=======
+core/main.c \
+core/system_stm32l4xx.c \
+core/sysmem.c \
+core/syscalls.c \
+drivers/mcu/mcu.c \
+drivers/timers/timer.c \
+drivers/i2c/i2c.c \
+drivers/adc.c \
+middleware/rtc.c \
+utils/fifo/fifo.c \
+utils/fifo/fifo_test.c \
+utils/random/random.c \
+>>>>>>> origin/main
 test/tests.c \
 src/threadx/app/tx_app.c
 
@@ -106,6 +121,7 @@ AS_INCLUDES = \
 
 # C includes
 C_INCLUDES =  \
+<<<<<<< HEAD
 -Isrc/core \
 -Isrc/drivers/CMSIS/Device/ST/STM32L4xx/Include \
 -Isrc/drivers/CMSIS/Core/Include \
@@ -116,6 +132,18 @@ C_INCLUDES =  \
 -Isrc/middleware \
 -Isrc/utils/fifo \
 -Isrc/utils/random \
+=======
+-Icore \
+-Idrivers/CMSIS/Device/ST/STM32L4xx/Include \
+-Idrivers/CMSIS/Core/Include \
+-Idrivers/mcu \
+-Idrivers/timers \
+-Idrivers/i2c \
+-Idrivers \
+-Imiddleware \
+-Iutils/fifo \
+-Iutils/random \
+>>>>>>> origin/main
 -Itest \
 -I$(THREADX_DIR)/common/inc \
 -I$(THREADX_DIR)/app \
