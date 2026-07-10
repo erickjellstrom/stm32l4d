@@ -1,13 +1,15 @@
 #include "rtc.h"
 #include "i2c.h"
+#include "defines.h"
 
-// Global time parameters optimized for VS Code Cortex-Debug Live Watch
-volatile uint8_t hours = 0;
-volatile uint8_t minutes = 0;
-volatile uint8_t seconds = 0;
+#define PCF8563_7BIT_ADDR    0x51  
+#define REG_VL_SECONDS       0x02
+#define REG_VL_MINUTES       0x03
+#define REG_VL_HOURS         0x04
 
 
-void set_rtc_time(uint8_t sec, uint8_t min, uint8_t hour) {
+
+void rtc_set_time(uint8_t sec, uint8_t min, uint8_t hour) {
     uint8_t time_buffer[3];
 
     time_buffer[0] = DEC_TO_BCD(sec);   
@@ -16,10 +18,9 @@ void set_rtc_time(uint8_t sec, uint8_t min, uint8_t hour) {
 
     // Target PCF8563 (0x51), start at Seconds register (0x02), transmit 3 bytes
     i2c_write_reg(PCF8563_7BIT_ADDR, 0x02, 1, time_buffer, 3);
-//    write_sensor_registers(PCF8563_7BIT_ADDR, 0x02, 1, time_buffer, 3);
 }
 
-void get_rtc_time(uint8_t *time) {
+void rtc_get_time(uint8_t *time) {
     uint8_t raw_buffer[3];
     
     // Read 3 bytes starting at the Seconds register (0x02)
