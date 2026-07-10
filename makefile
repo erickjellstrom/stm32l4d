@@ -40,11 +40,12 @@ src/core/main.c \
 src/core/system_stm32l4xx.c \
 src/core/sysmem.c \
 src/core/syscalls.c \
+src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/drivers/timers/timer.c \
 src/mcal/i2c.c \
 src/mcal/adc.c \
-src/middleware/rtc.c \
+src/ecal/pcf8563.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
 src/utils/random/random.c \
@@ -107,13 +108,15 @@ AS_INCLUDES = \
 # C includes
 C_INCLUDES =  \
 -Isrc/core \
+-Isrc/data \
 -Isrc/drivers/CMSIS/Device/ST/STM32L4xx/Include \
 -Isrc/drivers/CMSIS/Core/Include \
 -Isrc/drivers/mcu \
 -Isrc/drivers/timers \
 -Isrc/mcal \
+-Isrc/common \
 -Isrc/drivers \
--Isrc/middleware \
+-Isrc/ecal \
 -Isrc/utils/fifo \
 -Isrc/utils/random \
 -Itest \
