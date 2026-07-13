@@ -50,6 +50,7 @@ src/mcal/gpio.c \
 src/ecal/pcf8563.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
+src/utils/statemachine.c \
 src/utils/random/random.c \
 test/tests.c \
 src/threadx/app/tx_app.c
@@ -119,6 +120,7 @@ C_INCLUDES =  \
 -Isrc/drivers \
 -Isrc/ecal \
 -Isrc/utils/fifo \
+-Isrc/utils \
 -Isrc/utils/random \
 -Itest \
 -I$(THREADX_DIR)/common/inc \
