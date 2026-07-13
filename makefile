@@ -42,9 +42,11 @@ src/core/sysmem.c \
 src/core/syscalls.c \
 src/data/data.c \
 src/drivers/mcu/mcu.c \
-src/drivers/timers/timer.c \
+src/mcal/timer.c \
 src/mcal/i2c.c \
 src/mcal/adc.c \
+src/mcal/uart.c \
+src/mcal/gpio.c \
 src/ecal/pcf8563.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
@@ -112,7 +114,6 @@ C_INCLUDES =  \
 -Isrc/drivers/CMSIS/Device/ST/STM32L4xx/Include \
 -Isrc/drivers/CMSIS/Core/Include \
 -Isrc/drivers/mcu \
--Isrc/drivers/timers \
 -Isrc/mcal \
 -Isrc/common \
 -Isrc/drivers \

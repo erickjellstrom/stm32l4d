@@ -6,13 +6,14 @@
 #include "rtc.h"
 #include "adc.h"
 #include "data.h"
-
+#include "gpio.h"
+#include "uart.h"
 
 int main(void) {
 
     // Initialize Peripherals
-    mcu_init();
-    UART1_Init();
+    gpio_led2_init();
+    uart_init();
     i2c_init();
     rtc_set_time(30, 15, 3);
     
@@ -33,7 +34,7 @@ int main(void) {
         
         // Translate digital format back to an absolute voltage range (assumes VREF = 3.3V)
         adc_input_voltage = ((float)adc_raw_value * 3.3f) / 4095.0f;
-        
+        gpio_led2_toggle();  
 
         tim2_delay_ms(500);
         printf("while loop\n");

@@ -30,9 +30,21 @@
 #include <sys/time.h>
 #include <sys/times.h>
 
+#include "stm32l475xx.h"
+
+// The standard library calls __io_putchar when you use printf.
+// We override it to push characters out of the USART1 data register.
+int __io_putchar(int ch) {
+    // Wait until the Transmit Data Register is empty (TXE bit becomes 1)
+    while (!(USART1->ISR & USART_ISR_TXE));
+    
+    // Write the character to the data register
+    USART1->TDR = (ch & 0xFF);
+    return ch;
+}
 
 /* Variables */
-extern int __io_putchar(int ch) __attribute__((weak));
+//extern int __io_putchar(int ch) __attribute__((weak));
 extern int __io_getchar(void) __attribute__((weak));
 
 
