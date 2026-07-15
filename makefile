@@ -40,6 +40,7 @@ src/core/main.c \
 src/core/system_stm32l4xx.c \
 src/core/sysmem.c \
 src/core/syscalls.c \
+src/app/app.c \
 src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/mcal/timer.c \
@@ -112,6 +113,7 @@ AS_INCLUDES = \
 C_INCLUDES =  \
 -Isrc/core \
 -Isrc/data \
+-Isrc/app \
 -Isrc/drivers/CMSIS/Device/ST/STM32L4xx/Include \
 -Isrc/drivers/CMSIS/Core/Include \
 -Isrc/drivers/mcu \

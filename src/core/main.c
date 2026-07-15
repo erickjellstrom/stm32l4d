@@ -9,37 +9,34 @@
 #include "gpio.h"
 #include "uart.h"
 #include "statemachine.h"
+#include "app.h"
 
-// Use 'extern' to tell main.c that app_sm is defined in another file
-//extern const struct statemachine app_sm[];
+
+
+struct statemachine* app_sm;
+input_t app_inp = INPUT_STOP;
 
 int main(void) {
 
-    // Initialize Peripherals
-    gpio_led2_init();
-    uart_init();
-    i2c_init();
-    rtc_set_time(30, 15, 3);
+    sm_init(&app_sm, STATE_IDLE);
     
-    tim2_init();
-    fifo_test();
-    random_test();
-
-    adc_init();
+//    main_init(); 
     
     //Hand over full CPU control to the ThreadX RTOS kernel
 //    tx_kernel_enter();
 
-    struct statemachine* machine;
-    
-    printf("--- Initializing State Machine ---\n");
-    sm_init(&machine, STATE_IDLE);
+    while(1) {
+        sm_execute(app_sm);
+        app_failures();
+        app_inp = app_input();
+        sm_process_event(&app_sm, app_inp); 
+        
+        tim2_delay_ms(500);
+        printf("main while loop\n");
+    }
 
-    printf("\n--- Simulating Event Pipeline ---\n");
-    
-    sm_execute(machine);
-
-    // 1. Send START event
+/*
+// 1. Send START event
     printf("Sending START event:\n");
     sm_process_event(&machine, INPUT_START); // Transitions to RUNNING
     sm_execute(machine);
@@ -59,18 +56,6 @@ int main(void) {
     sm_process_event(&machine, INPUT_STOP);  // Recovers back to IDLE
     sm_execute(machine);
 
-    while(1) {
-        // Fetch raw 12-bit sample (0 - 4095)
-        adc_raw_value = adc_read();
-        
-        // Translate digital format back to an absolute voltage range (assumes VREF = 3.3V)
-        adc_input_voltage = ((float)adc_raw_value * 3.3f) / 4095.0f;
-        gpio_led2_toggle();  
-
-        tim2_delay_ms(500);
-        printf("while loop\n");
-        rtc_get_time(rtc_time);
-    }
-
+*/
     return 0;
 }

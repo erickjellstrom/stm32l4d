@@ -1,7 +1,11 @@
 #include "statemachine.h"
+#include "app.h"
 
-static void do_idle(void)    { printf("[ACTION] Idle...\n"); }
-static void do_running(void) { printf("[ACTION] Running...\n"); }
+extern main_init();
+
+static void do_idle(void) { app_init(); }
+static void do_standby(void) { app_standby(); }
+static void do_running(void) { app_run(); }
 static void do_error(void)   { printf("[ACTION] Error...\n"); }
 
 const struct statemachine sm[STATE_COUNT] = {
@@ -9,16 +13,25 @@ const struct statemachine sm[STATE_COUNT] = {
         .state = STATE_IDLE, 
         .action = do_idle,
         .next = {
-            [INPUT_STOP]  = &sm[STATE_IDLE], 
+            [INPUT_STOP]  = &sm[STATE_STANDBY], 
             [INPUT_START] = &sm[STATE_RUNNING], 
-            [INPUT_FAIL]  = &sm[STATE_IDLE]
+            [INPUT_FAIL]  = &sm[STATE_ERROR]
+        }
+    },
+    [STATE_STANDBY] = {
+        .state = STATE_STANDBY, 
+        .action = do_standby,
+        .next = {
+            [INPUT_STOP]  = &sm[STATE_STANDBY], 
+            [INPUT_START] = &sm[STATE_RUNNING], 
+            [INPUT_FAIL]  = &sm[STATE_ERROR]
         }
     },
     [STATE_RUNNING] = {
         .state = STATE_RUNNING, 
         .action = do_running,
         .next = {
-            [INPUT_STOP]  = &sm[STATE_IDLE], 
+            [INPUT_STOP]  = &sm[STATE_STANDBY], 
             [INPUT_START] = &sm[STATE_RUNNING], 
             [INPUT_FAIL]  = &sm[STATE_ERROR]
         }
@@ -27,8 +40,8 @@ const struct statemachine sm[STATE_COUNT] = {
         .state = STATE_ERROR, 
         .action = do_error,
         .next = {
-            [INPUT_STOP]  = &sm[STATE_IDLE], 
-            [INPUT_START] = &sm[STATE_ERROR],   
+            [INPUT_STOP]  = &sm[STATE_ERROR], 
+            [INPUT_START] = &sm[STATE_IDLE],   
             [INPUT_FAIL]  = &sm[STATE_ERROR]
         }
     }

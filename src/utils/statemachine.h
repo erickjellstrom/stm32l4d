@@ -7,8 +7,9 @@
 
 typedef enum {
     STATE_IDLE = 0,
-    STATE_RUNNING = 1,
-    STATE_ERROR = 2,
+    STATE_STANDBY = 1,
+    STATE_RUNNING = 2,
+    STATE_ERROR = 3,
     STATE_COUNT // Automatically tracks total number of states (3)
 } state_t;
 
