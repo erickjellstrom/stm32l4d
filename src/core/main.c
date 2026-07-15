@@ -11,7 +11,7 @@
 #include "statemachine.h"
 
 // Use 'extern' to tell main.c that app_sm is defined in another file
-extern const struct statemachine app_sm[];
+//extern const struct statemachine app_sm[];
 
 int main(void) {
 
@@ -30,20 +30,34 @@ int main(void) {
     //Hand over full CPU control to the ThreadX RTOS kernel
 //    tx_kernel_enter();
 
-// Start at State 0
-    const struct statemachine* current = &app_sm[0];
-    printf("Starting State: %d\n", current->state);
+    struct statemachine* machine;
+    
+    printf("--- Initializing State Machine ---\n");
+    sm_init(&machine, STATE_IDLE);
 
-    // Simulate an input of '1' while in State 0 -> should go to State 1
-    int input = 1; 
-    current = current->next[input];
-    printf("New State: %d\n", current->state); // Prints 1
+    printf("\n--- Simulating Event Pipeline ---\n");
+    
+    sm_execute(machine);
 
-    // Simulate an input of '2' while in State 1 -> should go to State 2
-    input = 2;
-    current = current->next[input];
-    printf("New State: %d\n", current->state); // Prints 2
+    // 1. Send START event
+    printf("Sending START event:\n");
+    sm_process_event(&machine, INPUT_START); // Transitions to RUNNING
+    sm_execute(machine);
 
+    // 2. Send another START event (loops back to self)
+    printf("\nSending START event again:\n");
+    sm_process_event(&machine, INPUT_START); // Stays in RUNNING
+    sm_execute(machine);
+
+    // 3. Send FAIL event
+    printf("\nSending FAIL event:\n");
+    sm_process_event(&machine, INPUT_FAIL);  // Transitions to ERROR
+    sm_execute(machine);
+
+    // 4. Send STOP event (Recovery path)
+    printf("\nSending STOP event:\n");
+    sm_process_event(&machine, INPUT_STOP);  // Recovers back to IDLE
+    sm_execute(machine);
 
     while(1) {
         // Fetch raw 12-bit sample (0 - 4095)
