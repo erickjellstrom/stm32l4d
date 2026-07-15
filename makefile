@@ -40,6 +40,7 @@ src/core/main.c \
 src/core/system_stm32l4xx.c \
 src/core/sysmem.c \
 src/core/syscalls.c \
+src/app/app.c \
 src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/mcal/timer.c \
@@ -50,6 +51,7 @@ src/mcal/gpio.c \
 src/ecal/pcf8563.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
+src/utils/statemachine.c \
 src/utils/random/random.c \
 test/tests.c \
 src/threadx/app/tx_app.c
@@ -111,6 +113,7 @@ AS_INCLUDES = \
 C_INCLUDES =  \
 -Isrc/core \
 -Isrc/data \
+-Isrc/app \
 -Isrc/drivers/CMSIS/Device/ST/STM32L4xx/Include \
 -Isrc/drivers/CMSIS/Core/Include \
 -Isrc/drivers/mcu \
@@ -119,6 +122,7 @@ C_INCLUDES =  \
 -Isrc/drivers \
 -Isrc/ecal \
 -Isrc/utils/fifo \
+-Isrc/utils \
 -Isrc/utils/random \
 -Itest \
 -I$(THREADX_DIR)/common/inc \

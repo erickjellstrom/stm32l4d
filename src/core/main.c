@@ -8,38 +8,54 @@
 #include "data.h"
 #include "gpio.h"
 #include "uart.h"
+#include "statemachine.h"
+#include "app.h"
+
+
+
+struct statemachine* app_sm;
+input_t app_inp = INPUT_STOP;
 
 int main(void) {
 
-    // Initialize Peripherals
-    gpio_led2_init();
-    uart_init();
-    i2c_init();
-    rtc_set_time(30, 15, 3);
+    sm_init(&app_sm, STATE_IDLE);
     
-    tim2_init();
-    fifo_test();
-    random_test();
-
-    adc_init();
+//    main_init(); 
     
     //Hand over full CPU control to the ThreadX RTOS kernel
 //    tx_kernel_enter();
 
-
-
     while(1) {
-        // Fetch raw 12-bit sample (0 - 4095)
-        adc_raw_value = adc_read();
+        sm_execute(app_sm);
+        app_failures();
+        app_inp = app_input();
+        sm_process_event(&app_sm, app_inp); 
         
-        // Translate digital format back to an absolute voltage range (assumes VREF = 3.3V)
-        adc_input_voltage = ((float)adc_raw_value * 3.3f) / 4095.0f;
-        gpio_led2_toggle();  
-
         tim2_delay_ms(500);
-        printf("while loop\n");
-        rtc_get_time(rtc_time);
+        printf("main while loop\n");
     }
 
+/*
+// 1. Send START event
+    printf("Sending START event:\n");
+    sm_process_event(&machine, INPUT_START); // Transitions to RUNNING
+    sm_execute(machine);
+
+    // 2. Send another START event (loops back to self)
+    printf("\nSending START event again:\n");
+    sm_process_event(&machine, INPUT_START); // Stays in RUNNING
+    sm_execute(machine);
+
+    // 3. Send FAIL event
+    printf("\nSending FAIL event:\n");
+    sm_process_event(&machine, INPUT_FAIL);  // Transitions to ERROR
+    sm_execute(machine);
+
+    // 4. Send STOP event (Recovery path)
+    printf("\nSending STOP event:\n");
+    sm_process_event(&machine, INPUT_STOP);  // Recovers back to IDLE
+    sm_execute(machine);
+
+*/
     return 0;
 }
