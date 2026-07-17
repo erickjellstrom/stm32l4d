@@ -9,8 +9,9 @@
 #include "gpio.h"
 #include "uart.h"
 
-uint8_t g_start = 1;
+volatile uint8_t g_start = 0;
 uint8_t g_error = 0;
+uint8_t g_temp = 0;
 
 void app_init()
 {
@@ -21,11 +22,14 @@ void app_init()
     rtc_set_time(30, 15, 3);
     tim2_init();
     adc_init();
+    gpio_init_button();
 }
 
 void app_standby()
 {
-    while(!g_start) {}
+    while(!g_start) {
+        __WFI(); // CPU should sleep here and wait for interuppts
+    }
 }
 
 void app_run()
@@ -37,6 +41,8 @@ void app_run()
     tim2_delay_ms(500);
     printf("app_run()\n");
     rtc_get_time(rtc_time);
+
+    g_temp = gpio_button_get();
 }
 
 void app_failures()
