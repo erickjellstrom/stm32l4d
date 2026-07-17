@@ -13,8 +13,49 @@ volatile uint8_t g_start = 0;
 uint8_t g_error = 0;
 uint8_t g_temp = 0;
 
+// Define a structure in a memory section that the linker won't clear on reset
+__attribute__((section(".noinit"))) struct SystemStatus {
+    uint32_t magic_number;
+    uint32_t last_error_code;
+    uint8_t reset_cnt;
+} sys_status;
+
+#define MAGIC_CRASH_FLAG 0xDEADBEEF
+#define MAGIC_CLEAN_BOOT 0x12345678
+
+void app_error_handler(void)
+{
+// 1. Disable all interrupts to prevent nesting
+    __disable_irq();
+
+    g_error = 1;
+    sys_status.magic_number = MAGIC_CRASH_FLAG;
+    
+    // 3. Force an immediate hardware reset (ARM Cortex-M example)
+    NVIC_SystemReset(); 
+
+}
+
 void app_init()
 {
+ // 1. Check if the magic flag matches our known crash flag
+    if (sys_status.magic_number == MAGIC_CRASH_FLAG) {
+        // We reached here via NVIC_SystemReset() from our error interrupt
+        sys_status.reset_cnt++;
+
+        if (sys_status.reset_cnt == 3) {
+            while(1) {} // endless loop
+        } 
+    } 
+    else {
+        // Cold boot or power glitch (RAM contained random garbage or 0)
+        // Explicitly initialize the variables for clean execution
+        sys_status.magic_number = MAGIC_CLEAN_BOOT;
+        sys_status.last_error_code = 0;
+        sys_status.reset_cnt = 0;
+        
+    }
+
     // Initialize Peripherals
     gpio_led2_init();
     uart_init();
@@ -54,7 +95,7 @@ void app_failures()
     adc_input_voltage = ((float)adc_raw_value * 3.3f) / 4095.0f;
 
     if (adc_input_voltage < 1.5) {
-        g_error = 1;
+        app_error_handler();
     }
     else g_error = 0;
 }
