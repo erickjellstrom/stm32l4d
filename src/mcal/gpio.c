@@ -11,20 +11,25 @@ void gpio_led2_init(void)
     GPIOB->MODER |= (1 << GPIO_MODER_MODE14_Pos);
 }
 
-void gpio_init_button_old(void)
+void gpio_d2_init(void)
 {
-    // PC13 Blue Button, when pushed goes to gnd
+    // D2 / PD14 as input pin
+    
+    // Enable the clock for GPIOD
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIODEN;
 
-    // Enable the clock for GPIOC
-    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOCEN;
+    // Set Pin 14 as an Input Pin
+    GPIOD->MODER &= ~(GPIO_MODER_MODE14);
 
-    // Set Pin 13 as an Input Pin
-    GPIOC->MODER &= ~(GPIO_MODER_MODE13);
+    // pull down
+    GPIOC->PUPDR &= ~GPIO_PUPDR_PUPD14;
+    GPIOC->PUPDR |= GPIO_PUPDR_PUPD14_1; // 01: pull down
+}
 
-    // Set Pin 13 as Pull Up
-    GPIOC->PUPDR &= ~GPIO_PUPDR_PUPD13;
-    //    GPIOC->PUPDR |= (0x1UL << GPIO_PUPDR_PUPD13_Pos);
-
+uint8_t gpio_d2_get(void)
+{
+    if (GPIOD->IDR & GPIO_IDR_ID14) return 1;
+    else return 0;
 }
 
 void gpio_init_button(void) {

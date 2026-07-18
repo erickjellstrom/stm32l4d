@@ -10,8 +10,13 @@
 #include "uart.h"
 
 volatile uint8_t g_start = 0;
-uint8_t g_error = 0;
+volatile uint8_t g_error_ext = 0;
+volatile uint8_t g_error_int = 0;
 uint8_t g_temp = 0;
+volatile uint8_t g_failure = 0;
+
+static void app_int_fail(void);
+static void app_int_fail(void);
 
 // Define a structure in a memory section that the linker won't clear on reset
 __attribute__((section(".noinit"))) struct SystemStatus {
@@ -28,7 +33,6 @@ void app_error_handler(void)
 // 1. Disable all interrupts to prevent nesting
     __disable_irq();
 
-    g_error = 1;
     sys_status.magic_number = MAGIC_CRASH_FLAG;
     
     // 3. Force an immediate hardware reset (ARM Cortex-M example)
@@ -44,6 +48,7 @@ void app_init()
         sys_status.reset_cnt++;
 
         if (sys_status.reset_cnt == 3) {
+            g_failure = 1;
             while(1) {} // endless loop
         } 
     } 
@@ -64,6 +69,10 @@ void app_init()
     tim2_init();
     adc_init();
     gpio_init_button();
+    gpio_d2_init();
+    
+    // Check for internal failures
+    app_int_fail();
 }
 
 void app_standby()
@@ -85,9 +94,31 @@ void app_run()
 
     g_temp = gpio_button_get();
 }
-
-void app_failures()
+void app_error(void)
 {
+    if (g_error_int) {
+        while(!g_start) {}
+        app_error_handler();
+    }
+    
+    if (g_error_ext) {
+        while(!g_start) {}
+    }
+}
+
+static void app_int_fail(void)
+{
+    uint8_t d2 = gpio_d2_get();
+
+    if (d2 == 1) {
+        g_error_int = 1;
+        //app_error_handler();
+    }
+}
+
+static void app_ext_fail(void)
+{
+
     // Fetch raw 12-bit sample (0 - 4095)
     adc_raw_value = adc_read();
     
@@ -95,12 +126,12 @@ void app_failures()
     adc_input_voltage = ((float)adc_raw_value * 3.3f) / 4095.0f;
 
     if (adc_input_voltage < 1.5) {
-        app_error_handler();
+        g_error_ext = 1;
     }
-    else g_error = 0;
+    else g_error_ext = 0;
 }
 
-input_t app_input()
+input_t app_input(void)
 {
     // Start with STOP
     input_t input = INPUT_STOP;
@@ -111,8 +142,11 @@ input_t app_input()
     }
 
     // Check for failures
-    if (g_error) {
+    app_ext_fail();
+    app_int_fail();
+    if (g_error_ext || g_error_int) {
         input = INPUT_FAIL;
+        g_start = 0;
     }
 
     return input;

@@ -10,3 +10,5 @@ static inline void gpio_led2_toggle(void) {
 
 void gpio_init_button(void);
 uint8_t gpio_button_get(void);
+void gpio_d2_init(void);
+uint8_t gpio_d2_get(void);

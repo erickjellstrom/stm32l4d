@@ -27,7 +27,7 @@ int main(void) {
 
     while(1) {
         sm_execute(app_sm);
-        app_failures();
+       // app_failures();
         app_inp = app_input();
         sm_process_event(&app_sm, app_inp); 
         
