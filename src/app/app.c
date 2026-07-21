@@ -8,6 +8,7 @@
 #include "data.h"
 #include "gpio.h"
 #include "uart.h"
+#include "error.h"
 
 volatile uint8_t g_start = 0;
 volatile uint8_t g_error_ext = 0;
@@ -17,7 +18,7 @@ volatile uint8_t g_failure = 0;
 
 static void app_int_fail(void);
 static void app_int_fail(void);
-
+/*
 // Define a structure in a memory section that the linker won't clear on reset
 __attribute__((section(".noinit"))) struct SystemStatus {
     uint32_t magic_number;
@@ -39,9 +40,10 @@ void app_error_handler(void)
     NVIC_SystemReset(); 
 
 }
-
+*/
 void app_init()
 {
+    /*
  // 1. Check if the magic flag matches our known crash flag
     if (sys_status.magic_number == MAGIC_CRASH_FLAG) {
         // We reached here via NVIC_SystemReset() from our error interrupt
@@ -60,6 +62,9 @@ void app_init()
         sys_status.reset_cnt = 0;
         
     }
+*/
+
+    error_handler_init();
 
     // Initialize Peripherals
     gpio_led2_init();
@@ -72,7 +77,7 @@ void app_init()
     gpio_d2_init();
     
     // Check for internal failures
-    app_int_fail();
+//    app_int_fail();
 }
 
 void app_standby()
@@ -98,7 +103,8 @@ void app_error(void)
 {
     if (g_error_int) {
         while(!g_start) {}
-        app_error_handler();
+        //app_error_handler();
+        error_handler_reset();
     }
     
     if (g_error_ext) {
@@ -106,30 +112,6 @@ void app_error(void)
     }
 }
 
-static void app_int_fail(void)
-{
-    uint8_t d2 = gpio_d2_get();
-
-    if (d2 == 1) {
-        g_error_int = 1;
-        //app_error_handler();
-    }
-}
-
-static void app_ext_fail(void)
-{
-
-    // Fetch raw 12-bit sample (0 - 4095)
-    adc_raw_value = adc_read();
-    
-    // Translate digital format back to an absolute voltage range (assumes VREF = 3.3V)
-    adc_input_voltage = ((float)adc_raw_value * 3.3f) / 4095.0f;
-
-    if (adc_input_voltage < 1.5) {
-        g_error_ext = 1;
-    }
-    else g_error_ext = 0;
-}
 
 input_t app_input(void)
 {
@@ -142,8 +124,9 @@ input_t app_input(void)
     }
 
     // Check for failures
-    app_ext_fail();
-    app_int_fail();
+    error_check();
+    //app_int_fail();
+    //app_ext_fail();
     if (g_error_ext || g_error_int) {
         input = INPUT_FAIL;
         g_start = 0;
