@@ -75,6 +75,9 @@ void app_init()
     adc_init();
     gpio_init_button();
     gpio_d2_init();
+    tim6_init();
+    tim7_init();
+    tim17_init();
     
     // Check for internal failures
 //    app_int_fail();
@@ -82,9 +85,18 @@ void app_init()
 
 void app_standby()
 {
+    NVIC_DisableIRQ(TIM6_DAC_IRQn);
+    NVIC_DisableIRQ(TIM7_IRQn);
+    NVIC_DisableIRQ(TIM1_TRG_COM_TIM17_IRQn);
+
     while(!g_start) {
-        __WFI(); // CPU should sleep here and wait for interuppts
+        // commenting this line out for debug purpose -> visability of state variables
+//        __WFI(); // CPU should sleep here and wait for interuppts
     }
+
+    NVIC_EnableIRQ(TIM6_DAC_IRQn);
+    NVIC_EnableIRQ(TIM7_IRQn);
+    NVIC_EnableIRQ(TIM1_TRG_COM_TIM17_IRQn);
 }
 
 void app_run()
@@ -124,9 +136,7 @@ input_t app_input(void)
     }
 
     // Check for failures
-    error_check();
-    //app_int_fail();
-    //app_ext_fail();
+//    error_check();
     if (g_error_ext || g_error_int) {
         input = INPUT_FAIL;
         g_start = 0;

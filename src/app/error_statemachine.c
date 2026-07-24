@@ -1,9 +1,16 @@
 #include "error_statemachine.h"
 #include "app.h"
 
+extern volatile uint8_t g_error_ext;
+extern volatile uint8_t g_error_int;
 
 static void do_no_error(void) {printf("do_no_error(void)\n");}
-static void do_ext_error(void) {printf("do_ext_error(void)\n");}
+static void do_ext_error(void)
+{
+    printf("do_ext_error(void)\n");
+    // Idea is that when ext err execution wait here in ISR and when fixed "simply" returns to running and rtos
+    while (g_error_ext) {}
+}
 static void do_int_error(void) {printf("do_int_error(void)\n");}
 static void do_int_failure(void) {printf("do_int_failure(void)\n");}
 static void do_int_perm_failure(void) {printf("do_perm_int_failure(void)\n");} 
