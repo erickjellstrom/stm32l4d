@@ -41,6 +41,8 @@ src/core/system_stm32l4xx.c \
 src/core/sysmem.c \
 src/core/syscalls.c \
 src/app/app.c \
+src/app/error.c \
+src/app/error_statemachine.c \
 src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/mcal/timer.c \

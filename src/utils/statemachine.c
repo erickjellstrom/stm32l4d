@@ -6,7 +6,7 @@ extern main_init();
 static void do_idle(void) { app_init(); }
 static void do_standby(void) { app_standby(); }
 static void do_running(void) { app_run(); }
-static void do_error(void)   { printf("[ACTION] Error...\n"); }
+static void do_error(void)   { app_error(); } 
 
 const struct statemachine sm[STATE_COUNT] = {
     [STATE_IDLE] = {
