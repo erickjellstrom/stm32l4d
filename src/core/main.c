@@ -8,27 +8,10 @@
 #include "data.h"
 #include "gpio.h"
 #include "uart.h"
-#include "statemachine.h"
+#include "app_statemachine.h"
 #include "app.h"
 #include "error_statemachine.h"
 
-
-
-struct statemachine* app_sm;
-input_t app_inp = INPUT_STOP;
-
-
-struct error_statemachine* error_sm_ptr;
-
-
-// Main loop - only executes state when input has changed
-void main_loop(void)
-{
-    input_t new_app_inp = app_input();
-    // Update main Statemachine
-    sm_process_event(&app_sm, new_app_inp); 
-    sm_execute(app_sm);
-}
 
 int main(void) {
 

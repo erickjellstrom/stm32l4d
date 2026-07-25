@@ -1,19 +1,29 @@
 #include "error_statemachine.h"
+#include "error.h"
 #include "app.h"
 
 extern volatile uint8_t g_error_ext;
 extern volatile uint8_t g_error_int;
+extern volatile uint8_t g_start;
 
 static void do_no_error(void) {printf("do_no_error(void)\n");}
 static void do_ext_error(void)
 {
     printf("do_ext_error(void)\n");
     // Idea is that when ext err execution wait here in ISR and when fixed "simply" returns to running and rtos
-    while (g_error_ext) {}
+    // Idea is now to move this to main loop
+   // while (g_error_ext) {}
 }
-static void do_int_error(void) {printf("do_int_error(void)\n");}
+static void do_int_error(void)
+{
+    
+    printf("do_int_error(void)\n");
+
+}
 static void do_int_failure(void) {printf("do_int_failure(void)\n");}
 static void do_int_perm_failure(void) {printf("do_perm_int_failure(void)\n");} 
+
+struct error_statemachine* error_sm_ptr;
 
 const struct error_statemachine error_sm[STATE_ERROR_COUNT] = {
     [STATE_NO_ERROR] = {

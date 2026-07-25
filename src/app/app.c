@@ -1,6 +1,5 @@
-
-
-#include "statemachine.h"
+#include "app_statemachine.h"
+#include "error_statemachine.h"
 #include "fifo_test.h"
 #include "tests.h"
 #include "rtc.h"
@@ -9,6 +8,7 @@
 #include "gpio.h"
 #include "uart.h"
 #include "error.h"
+#include "reset_handler.h"
 
 volatile uint8_t g_start = 0;
 volatile uint8_t g_error_ext = 0;
@@ -16,55 +16,42 @@ volatile uint8_t g_error_int = 0;
 uint8_t g_temp = 0;
 volatile uint8_t g_failure = 0;
 
-static void app_int_fail(void);
-static void app_int_fail(void);
-/*
-// Define a structure in a memory section that the linker won't clear on reset
-__attribute__((section(".noinit"))) struct SystemStatus {
-    uint32_t magic_number;
-    uint32_t last_error_code;
-    uint8_t reset_cnt;
-} sys_status;
+static app_input_t app_calc_input(void);
 
-#define MAGIC_CRASH_FLAG 0xDEADBEEF
-#define MAGIC_CLEAN_BOOT 0x12345678
+struct app_statemachine* app_sm;
+app_input_t app_inp = INPUT_STOP;
 
-void app_error_handler(void)
+// Main loop - only executes state when input has changed
+void app_loop(void)
 {
-// 1. Disable all interrupts to prevent nesting
-    __disable_irq();
-
-    sys_status.magic_number = MAGIC_CRASH_FLAG;
-    
-    // 3. Force an immediate hardware reset (ARM Cortex-M example)
-    NVIC_SystemReset(); 
-
+    app_input_t new_app_inp = app_calc_input();
+    // Update main Statemachine
+    sm_process_event(&app_sm, new_app_inp); 
+    sm_execute(app_sm);
 }
-*/
+
+static app_input_t app_calc_input(void)
+{
+    // Start with STOP
+    app_input_t input = INPUT_STOP;
+    
+    // Check for start condition
+    if (g_start) {
+        input = INPUT_START;
+    }
+
+    // Check for failures
+    if (error_sm_ptr->error_state != STATE_NO_ERROR) {
+        input = INPUT_FAIL;
+        g_start = 0;
+    }
+
+    return input;
+}
+
 void app_init()
 {
-    /*
- // 1. Check if the magic flag matches our known crash flag
-    if (sys_status.magic_number == MAGIC_CRASH_FLAG) {
-        // We reached here via NVIC_SystemReset() from our error interrupt
-        sys_status.reset_cnt++;
-
-        if (sys_status.reset_cnt == 3) {
-            g_failure = 1;
-            while(1) {} // endless loop
-        } 
-    } 
-    else {
-        // Cold boot or power glitch (RAM contained random garbage or 0)
-        // Explicitly initialize the variables for clean execution
-        sys_status.magic_number = MAGIC_CLEAN_BOOT;
-        sys_status.last_error_code = 0;
-        sys_status.reset_cnt = 0;
-        
-    }
-*/
-
-    error_handler_init();
+    reset_handler_init();
 
     // Initialize Peripherals
     gpio_led2_init();
@@ -111,36 +98,17 @@ void app_run()
 
     g_temp = gpio_button_get();
 }
+
 void app_error(void)
 {
-    if (g_error_int) {
-        while(!g_start) {}
-        //app_error_handler();
-        error_handler_reset();
-    }
+    printf("main statemachine error state function\n");
     
-    if (g_error_ext) {
-        while(!g_start) {}
+    // External error 
+    while (error_sm_ptr->error_state == STATE_EXT_ERROR) {}
+
+    // Internal error
+    if (error_sm_ptr->error_state == STATE_INT_ERROR) {
+        //while(!g_start) {}
+        reset_handler();
     }
-}
-
-
-input_t app_input(void)
-{
-    // Start with STOP
-    input_t input = INPUT_STOP;
-    
-    // Check for start condition
-    if (g_start) {
-        input = INPUT_START;
-    }
-
-    // Check for failures
-//    error_check();
-    if (g_error_ext || g_error_int) {
-        input = INPUT_FAIL;
-        g_start = 0;
-    }
-
-    return input;
 }

@@ -70,7 +70,7 @@ void tim6_init(void)
 
 }
 
-extern void main_loop(void);
+extern void app_loop(void);
 extern void error_loop(void);
 extern void sensor_loop(void);
 
@@ -106,7 +106,7 @@ void TIM6_DAC_IRQHandler(void) {
         TIM6->SR &= ~TIM_SR_UIF;
         
         // Add your 100ms recurring user code here
-        main_loop();
+        app_loop();
     }
 }
 

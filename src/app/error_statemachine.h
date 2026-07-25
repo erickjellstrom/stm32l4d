@@ -29,6 +29,8 @@ struct error_statemachine {
     void (*action)(void); // Function pointer
 };
 
+extern struct error_statemachine* error_sm_ptr;
+
 // Core Engine Functions
 void error_sm_init(struct error_statemachine** error_sm_ref, error_state_t initial_state);
 bool error_sm_process_event(struct error_statemachine** error_sm, error_input_t event);
