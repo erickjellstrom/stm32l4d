@@ -3,6 +3,7 @@
 #include "gpio.h"
 #include "data.h"
 #include "error_statemachine.h"
+#include "reset_handler.h"
 
 extern volatile uint8_t g_error_ext;
 extern volatile uint8_t g_error_int;
@@ -10,6 +11,7 @@ extern volatile uint8_t g_failure;
 
 static uint8_t error_check(void);
 static error_input_t error_input(void);
+
 
 error_input_t app_error_inp = INPUT_NO_ERROR;
 
@@ -37,7 +39,6 @@ static uint8_t app_int_fail(void)
     g_error_int = 0;
     if (d2 == 1) {
         g_error_int = 1;
-        //app_error_handler();
     }
     if (g_error_int == 1) return 1;
     else return 0;
@@ -76,10 +77,18 @@ static error_input_t error_input(void)
         input = INPUT_EXT_ERROR;
     }
 
-    // Check for external errors
+    // Check for internal errors
     if (g_error_int) {
         input = INPUT_INT_ERROR;
     }
+
+    // Check for sw resets due to internal errors
+    if (sys_status.reset_cnt >= 3) {
+        input = INPUT_INT_FAILURE;
+    }
+
+    // TBD check for failures after power on (nvm implementation needed)
+    //input = INPUT_INT_PERM_FAILURE;
 
     return input;
 }

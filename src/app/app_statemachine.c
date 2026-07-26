@@ -1,5 +1,5 @@
 #include "app_statemachine.h"
-#include "app.h"
+#include "app_handler.h"
 
 extern main_init();
 
@@ -15,7 +15,7 @@ const struct app_statemachine sm[STATE_COUNT] = {
         .next = {
             [INPUT_STOP]  = &sm[STATE_STANDBY], 
             [INPUT_START] = &sm[STATE_RUNNING], 
-            [INPUT_FAIL]  = &sm[STATE_STANDBY]
+            [INPUT_FAIL]  = &sm[STATE_ERROR]
         }
     },
     [STATE_STANDBY] = {

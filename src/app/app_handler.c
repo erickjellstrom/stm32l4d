@@ -7,7 +7,7 @@
 #include "data.h"
 #include "gpio.h"
 #include "uart.h"
-#include "error.h"
+#include "error_handler.h"
 #include "reset_handler.h"
 
 volatile uint8_t g_start = 0;
@@ -65,9 +65,6 @@ void app_init()
     tim6_init();
     tim7_init();
     tim17_init();
-    
-    // Check for internal failures
-//    app_int_fail();
 }
 
 void app_standby()
@@ -88,15 +85,15 @@ void app_standby()
 
 void app_run()
 {
-    fifo_test();
-    random_test();
+//    fifo_test();
+//    random_test();
     gpio_led2_toggle();  
 
     tim2_delay_ms(500);
     printf("app_run()\n");
-    rtc_get_time(rtc_time);
+//    rtc_get_time(rtc_time);
 
-    g_temp = gpio_button_get();
+//    g_temp = gpio_button_get();
 }
 
 void app_error(void)
@@ -105,10 +102,15 @@ void app_error(void)
     
     // External error 
     while (error_sm_ptr->error_state == STATE_EXT_ERROR) {}
+        // stay in loop
 
     // Internal error
     if (error_sm_ptr->error_state == STATE_INT_ERROR) {
-        //while(!g_start) {}
+        while(!g_start) {} // wait for button to be pressed before reset
         reset_handler();
     }
+
+    // Internal failure
+    while (error_sm_ptr->error_state == STATE_INT_FAILURE) {}
+        // stay in loop
 }

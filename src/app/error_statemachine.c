@@ -1,27 +1,19 @@
 #include "error_statemachine.h"
-#include "error.h"
-#include "app.h"
+#include "error_handler.h"
+#include "app_handler.h"
 
 extern volatile uint8_t g_error_ext;
 extern volatile uint8_t g_error_int;
 extern volatile uint8_t g_start;
 
-static void do_no_error(void) {printf("do_no_error(void)\n");}
-static void do_ext_error(void)
-{
-    printf("do_ext_error(void)\n");
-    // Idea is that when ext err execution wait here in ISR and when fixed "simply" returns to running and rtos
-    // Idea is now to move this to main loop
-   // while (g_error_ext) {}
-}
-static void do_int_error(void)
-{
-    
+static void do_no_error(void) { printf("do_no_error(void)\n"); }
+static void do_ext_error(void) { printf("do_ext_error(void)\n"); }
+static void do_int_error(void) { 
     printf("do_int_error(void)\n");
-
+    g_start = 0; // not a nice solution, but needed break in order to test reset functionality
 }
-static void do_int_failure(void) {printf("do_int_failure(void)\n");}
-static void do_int_perm_failure(void) {printf("do_perm_int_failure(void)\n");} 
+static void do_int_failure(void) { printf("do_int_failure(void)\n"); }
+static void do_int_perm_failure(void) { printf("do_perm_int_failure(void)\n"); } 
 
 struct error_statemachine* error_sm_ptr;
 
@@ -98,7 +90,7 @@ void error_sm_execute(struct error_statemachine* error_sm)
 
 // Moves to the next state based on the input event and runs its loop action
 bool error_sm_process_event(struct error_statemachine** error_sm_ref, error_input_t event) {
-    if (event >= INPUT_COUNT) return false;
+    if (event >= INPUT_ERROR_COUNT) return false;
 
     struct error_statemachine* next_state = (*error_sm_ref)->next[event];
     

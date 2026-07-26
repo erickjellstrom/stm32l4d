@@ -9,7 +9,7 @@
 #include "gpio.h"
 #include "uart.h"
 #include "app_statemachine.h"
-#include "app.h"
+#include "app_handler.h"
 #include "error_statemachine.h"
 
 
@@ -23,6 +23,10 @@ int main(void) {
     error_sm_init(&error_sm_ptr, STATE_NO_ERROR);
     error_sm_execute(error_sm_ptr);
     
+    // Execute error statemachine
+    sensor_loop();
+    error_loop();
+
     // Set priority for TIM6 DAC underflow interrupt (optional but recommended)
     NVIC_SetPriority(TIM6_DAC_IRQn, 5);
 
