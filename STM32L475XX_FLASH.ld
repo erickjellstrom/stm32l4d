@@ -165,6 +165,20 @@ SECTIONS
     _edata = .;        /* define a global symbol at data end */
   } >RAM AT> FLASH
 
+/* ... existing text and data sections ... */
+
+  /* Custom section for data that survives software reset */
+  .noinit (NOLOAD) :
+  {
+    . = ALIGN(4);
+    _snoinit = .;        /* Create a global symbol at start of section */
+    *(.noinit)           /* Include all .noinit sections from object files */
+    *(.noinit*)          /* Include all wildcard .noinit sections */
+    . = ALIGN(4);
+    _enoinit = .;        /* Create a global symbol at end of section */
+  } > RAM                /* Directs this section to your RAM region */
+
+  /* ... existing .bss section ... */
   
   /* Uninitialized data section */
   . = ALIGN(4);

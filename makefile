@@ -40,7 +40,11 @@ src/core/main.c \
 src/core/system_stm32l4xx.c \
 src/core/sysmem.c \
 src/core/syscalls.c \
-src/app/app.c \
+src/app/app_handler.c \
+src/app/error_handler.c \
+src/app/reset_handler.c \
+src/app/error_statemachine.c \
+src/app/app_statemachine.c \
 src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/mcal/timer.c \
@@ -51,7 +55,6 @@ src/mcal/gpio.c \
 src/ecal/pcf8563.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
-src/utils/statemachine.c \
 src/utils/random/random.c \
 test/tests.c \
 src/threadx/app/tx_app.c
@@ -122,7 +125,6 @@ C_INCLUDES =  \
 -Isrc/drivers \
 -Isrc/ecal \
 -Isrc/utils/fifo \
--Isrc/utils \
 -Isrc/utils/random \
 -Itest \
 -I$(THREADX_DIR)/common/inc \
