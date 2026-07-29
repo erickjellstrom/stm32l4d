@@ -16,14 +16,13 @@
 int main(void) {
 
     // Initialize main statemachine
-    sm_init(&app_sm, STATE_IDLE);
-    sm_execute(app_sm);
+    sm_init(&app_sm, STATE_INIT);
     
     // Initialize error statemachine
     error_sm_init(&error_sm_ptr, STATE_NO_ERROR);
     error_sm_execute(error_sm_ptr);
     
-    // Execute error statemachine
+    // Execute sensor loop and error statemachine one time from main()
     sensor_loop();
     error_loop();
 

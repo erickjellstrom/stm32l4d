@@ -43,6 +43,7 @@ src/core/syscalls.c \
 src/app/app_handler.c \
 src/app/error_handler.c \
 src/app/reset_handler.c \
+src/app/sensor_handler.c \
 src/app/error_statemachine.c \
 src/app/app_statemachine.c \
 src/data/data.c \

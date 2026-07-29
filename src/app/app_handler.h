@@ -5,7 +5,6 @@
 
 extern volatile uint8_t g_start;
 
-extern struct app_statemachine* app_sm;
 extern app_input_t app_inp;
 
 void app_init();

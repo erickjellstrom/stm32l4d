@@ -11,38 +11,31 @@
 #include "reset_handler.h"
 
 volatile uint8_t g_start = 0;
-volatile uint8_t g_error_ext = 0;
-volatile uint8_t g_error_int = 0;
-uint8_t g_temp = 0;
-volatile uint8_t g_failure = 0;
 
 static app_input_t app_calc_input(void);
 
-struct app_statemachine* app_sm;
-app_input_t app_inp = INPUT_STOP;
+app_input_t app_inp = INPUT_STANDBY;
 
-// Main loop - only executes state when input has changed
 void app_loop(void)
 {
     app_input_t new_app_inp = app_calc_input();
     // Update main Statemachine
     sm_process_event(&app_sm, new_app_inp); 
-    sm_execute(app_sm);
 }
 
 static app_input_t app_calc_input(void)
 {
     // Start with STOP
-    app_input_t input = INPUT_STOP;
+    app_input_t input = INPUT_STANDBY;
     
     // Check for start condition
     if (g_start) {
-        input = INPUT_START;
+        input = INPUT_RUN;
     }
 
     // Check for failures
     if (error_sm_ptr->error_state != STATE_NO_ERROR) {
-        input = INPUT_FAIL;
+        input = INPUT_ERROR;
         g_start = 0;
     }
 

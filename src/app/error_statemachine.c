@@ -2,8 +2,6 @@
 #include "error_handler.h"
 #include "app_handler.h"
 
-extern volatile uint8_t g_error_ext;
-extern volatile uint8_t g_error_int;
 extern volatile uint8_t g_start;
 
 static void do_no_error(void) { printf("do_no_error(void)\n"); }
