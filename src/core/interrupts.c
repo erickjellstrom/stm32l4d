@@ -3,6 +3,26 @@
 #include "app_handler.h"
 #include "data.h"
 
+void irq_init(void)
+{
+    // Set priority for TIM6 DAC underflow interrupt (optional but recommended)
+    NVIC_SetPriority(TIM6_DAC_IRQn, 5);
+
+    // Enable TIM6 interrupt line in the NVIC
+    NVIC_EnableIRQ(TIM6_DAC_IRQn);
+    
+    // Set priority for TIM7 DAC underflow interrupt (optional but recommended)
+    NVIC_SetPriority(TIM7_IRQn, 4);
+
+    // Enable TIM7 interrupt line in the NVIC
+    NVIC_EnableIRQ(TIM7_IRQn);
+
+    // 6. Configure the Nested Vectored Interrupt Controller (NVIC)
+    // TIM17 shares an interrupt line on many STM32L4 MCUs: TIM1_TRG_COM_TIM17_IRQn
+    NVIC_SetPriority(TIM1_TRG_COM_TIM17_IRQn, 3); 
+    NVIC_EnableIRQ(TIM1_TRG_COM_TIM17_IRQn);
+}
+
 void irq_button_init(void)
 {
     // 3. Map PC13 to EXTI Line 13
