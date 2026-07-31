@@ -40,6 +40,7 @@ src/core/main.c \
 src/core/system_stm32l4xx.c \
 src/core/sysmem.c \
 src/core/syscalls.c \
+src/core/interrupts.c \
 src/app/app_handler.c \
 src/app/error_handler.c \
 src/app/reset_handler.c \

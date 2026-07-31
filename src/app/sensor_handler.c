@@ -1,5 +1,6 @@
 
 #include "data.h"
+#include "gpio.h"
 
 void sensor_loop(void)
 {
@@ -13,4 +14,10 @@ void sensor_loop(void)
     // Translate digital format back to an absolute voltage range (assumes VREF = 3.3V)
     adc_input_voltage = ((float)adc_raw_value * 3.3f) / 4095.0f;
 
+}
+
+void sensor_button_init(void)
+{
+    gpio_button_init();
+    irq_button_init();
 }

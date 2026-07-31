@@ -9,3 +9,5 @@ volatile float adc_input_voltage;
 
 //gpio
 volatile uint8_t gpio_d2;
+
+volatile uint8_t g_start = 0;

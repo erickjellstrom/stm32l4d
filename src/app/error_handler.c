@@ -14,7 +14,6 @@ void error_loop(void)
     // Update Error Statemachine
     app_error_inp = error_input();
     error_sm_process_event(&error_sm_ptr, app_error_inp);
-    error_sm_execute(error_sm_ptr);
 }
 
 static uint8_t error_check_internal(void)

@@ -13,4 +13,6 @@ extern volatile float adc_input_voltage;
 //gpio
 extern volatile uint8_t gpio_d2;
 
+extern volatile uint8_t g_start;
+
 #endif //DATA_H

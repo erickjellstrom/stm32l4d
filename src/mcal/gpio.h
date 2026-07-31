@@ -8,7 +8,7 @@ static inline void gpio_led2_toggle(void) {
     GPIOB->ODR ^= GPIO_ODR_OD14;
 }
 
-void gpio_init_button(void);
+void gpio_button_init(void);
 uint8_t gpio_button_get(void);
 void gpio_d2_init(void);
 uint8_t gpio_d2_get(void);

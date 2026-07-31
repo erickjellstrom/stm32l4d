@@ -1,56 +1,50 @@
 #include "app_statemachine.h"
 #include "app_handler.h"
 
-
-static void do_init(void) { app_init(); }
-static void do_standby(void) { app_standby(); }
-static void do_running(void) { app_run(); }
-static void do_error(void)   { app_error(); } 
-
 struct app_statemachine_state* app_sm;
 
-const struct app_statemachine_state app_statemachine[STATE_COUNT] = {
-    [STATE_INIT] = {
-        .state = STATE_INIT, 
-        .action = do_init,
+const struct app_statemachine_state app_statemachine[APP_STATE_COUNT] = {
+    [APP_STATE_INIT] = {
+        .state = APP_STATE_INIT, 
+        .action = app_init,
         .next = {
-            [INPUT_STANDBY]  = &app_statemachine[STATE_STANDBY], 
-            [INPUT_RUN] = &app_statemachine[STATE_RUNNING], 
-            [INPUT_ERROR]  = &app_statemachine[STATE_ERROR]
+            [APP_CMD_STANDBY]  = &app_statemachine[APP_STATE_STANDBY], 
+            [APP_CMD_RUN] = &app_statemachine[APP_STATE_RUNNING], 
+            [APP_CMD_ERROR]  = &app_statemachine[APP_STATE_ERROR]
         }
     },
-    [STATE_STANDBY] = {
-        .state = STATE_STANDBY, 
-        .action = do_standby,
+    [APP_STATE_STANDBY] = {
+        .state = APP_STATE_STANDBY, 
+        .action = app_standby,
         .next = {
-            [INPUT_STANDBY]  = &app_statemachine[STATE_STANDBY], 
-            [INPUT_RUN] = &app_statemachine[STATE_RUNNING], 
-            [INPUT_ERROR]  = &app_statemachine[STATE_ERROR]
+            [APP_CMD_STANDBY]  = &app_statemachine[APP_STATE_STANDBY], 
+            [APP_CMD_RUN] = &app_statemachine[APP_STATE_RUNNING], 
+            [APP_CMD_ERROR]  = &app_statemachine[APP_STATE_ERROR]
         }
     },
-    [STATE_RUNNING] = {
-        .state = STATE_RUNNING, 
-        .action = do_running,
+    [APP_STATE_RUNNING] = {
+        .state = APP_STATE_RUNNING, 
+        .action = app_run,
         .next = {
-            [INPUT_STANDBY]  = &app_statemachine[STATE_STANDBY], 
-            [INPUT_RUN] = &app_statemachine[STATE_RUNNING], 
-            [INPUT_ERROR]  = &app_statemachine[STATE_ERROR]
+            [APP_CMD_STANDBY]  = &app_statemachine[APP_STATE_STANDBY], 
+            [APP_CMD_RUN] = &app_statemachine[APP_STATE_RUNNING], 
+            [APP_CMD_ERROR]  = &app_statemachine[APP_STATE_ERROR]
         }
     },
-    [STATE_ERROR] = {
-        .state = STATE_ERROR, 
-        .action = do_error,
+    [APP_STATE_ERROR] = {
+        .state = APP_STATE_ERROR, 
+        .action = app_error,
         .next = {
-            [INPUT_STANDBY]  = &app_statemachine[STATE_STANDBY], 
-            [INPUT_RUN] = &app_statemachine[STATE_RUNNING],   
-            [INPUT_ERROR]  = &app_statemachine[STATE_ERROR]
+            [APP_CMD_STANDBY]  = &app_statemachine[APP_STATE_STANDBY], 
+            [APP_CMD_RUN] = &app_statemachine[APP_STATE_RUNNING],   
+            [APP_CMD_ERROR]  = &app_statemachine[APP_STATE_ERROR]
         }
     }
 };
 
 // Initializes the state machine context safely
 void sm_init(struct app_statemachine_state** sm_ref, app_state_t initial_state) {
-    if (initial_state >= STATE_COUNT) return;
+    if (initial_state >= APP_STATE_COUNT) return;
     *sm_ref = &app_statemachine[initial_state];
     
     // Execute state
@@ -58,8 +52,8 @@ void sm_init(struct app_statemachine_state** sm_ref, app_state_t initial_state) 
 }
 
 // Moves to the next state based on the input event and runs its loop action
-bool sm_process_event(struct app_statemachine_state** sm_ref, app_input_t event) {
-    if (event >= INPUT_COUNT) return false;
+bool sm_process_event(struct app_statemachine_state** sm_ref, app_cmd_t event) {
+    if (event >= APP_CMD_COUNT) return false;
 
     struct app_statemachine_state* next_state = (*sm_ref)->next[event];
     
