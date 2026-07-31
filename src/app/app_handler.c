@@ -9,40 +9,34 @@
 #include "uart.h"
 #include "error_handler.h"
 #include "reset_handler.h"
+#include "sensor_handler.h"
 
-volatile uint8_t g_start = 0;
-volatile uint8_t g_error_ext = 0;
-volatile uint8_t g_error_int = 0;
-uint8_t g_temp = 0;
-volatile uint8_t g_failure = 0;
+//volatile uint8_t g_start = 0;
 
-static app_input_t app_calc_input(void);
+static app_cmd_t app_calc_input(void);
 
-struct app_statemachine* app_sm;
-app_input_t app_inp = INPUT_STOP;
+app_cmd_t app_inp = APP_CMD_STANDBY;
 
-// Main loop - only executes state when input has changed
 void app_loop(void)
 {
-    app_input_t new_app_inp = app_calc_input();
+    app_cmd_t new_app_inp = app_calc_input();
     // Update main Statemachine
     sm_process_event(&app_sm, new_app_inp); 
-    sm_execute(app_sm);
 }
 
-static app_input_t app_calc_input(void)
+static app_cmd_t app_calc_input(void)
 {
     // Start with STOP
-    app_input_t input = INPUT_STOP;
+    app_cmd_t input = APP_CMD_STANDBY;
     
     // Check for start condition
     if (g_start) {
-        input = INPUT_START;
+        input = APP_CMD_RUN;
     }
 
     // Check for failures
     if (error_sm_ptr->error_state != STATE_NO_ERROR) {
-        input = INPUT_FAIL;
+        input = APP_CMD_ERROR;
         g_start = 0;
     }
 
@@ -60,7 +54,7 @@ void app_init()
     rtc_set_time(30, 15, 3);
     tim2_init();
     adc_init();
-    gpio_init_button();
+    sensor_button_init();
     gpio_d2_init();
     tim6_init();
     tim7_init();

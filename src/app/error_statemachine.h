@@ -34,6 +34,5 @@ extern struct error_statemachine* error_sm_ptr;
 // Core Engine Functions
 void error_sm_init(struct error_statemachine** error_sm_ref, error_state_t initial_state);
 bool error_sm_process_event(struct error_statemachine** error_sm, error_input_t event);
-void error_sm_execute(struct error_statemachine* error_sm);
 
 #endif //ERROR_STATEMACHINE_H

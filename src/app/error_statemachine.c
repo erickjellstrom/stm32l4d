@@ -2,8 +2,6 @@
 #include "error_handler.h"
 #include "app_handler.h"
 
-extern volatile uint8_t g_error_ext;
-extern volatile uint8_t g_error_int;
 extern volatile uint8_t g_start;
 
 static void do_no_error(void) { printf("do_no_error(void)\n"); }
@@ -79,14 +77,10 @@ const struct error_statemachine error_sm[STATE_ERROR_COUNT] = {
 void error_sm_init(struct error_statemachine** error_sm_ref, error_state_t initial_state) {
     if (initial_state >= STATE_ERROR_COUNT) return;
     *error_sm_ref = &error_sm[initial_state];
-    
-}
 
-void error_sm_execute(struct error_statemachine* error_sm)
-{
+    // Execute state function
     error_sm->action();
 }
-
 
 // Moves to the next state based on the input event and runs its loop action
 bool error_sm_process_event(struct error_statemachine** error_sm_ref, error_input_t event) {
@@ -100,6 +94,9 @@ bool error_sm_process_event(struct error_statemachine** error_sm_ref, error_inpu
     
     // Perform transition
     *error_sm_ref = next_state;
+
+    // Execute state function
+    error_sm->action();
 
     return state_changed;
 }
