@@ -63,6 +63,7 @@ void app_init()
     tim7_init();
     tim17_init();
     sensor_temp_init_bm();
+    sensor_imu_init_bm();
 }
 
 void app_standby()
@@ -92,6 +93,7 @@ void app_run()
 //    rtc_get_time(rtc_time);
 
     sensor_temp_read_bm();
+    sensor_imu_read_bm();
 //    g_temp = gpio_button_get();
 }
 

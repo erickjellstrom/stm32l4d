@@ -127,15 +127,12 @@ void sensor_imu_init_bm(void)
     // Activate LSM6DSL: CTRL3_C (0x12) = 0x44 (BDU=1, IF_INC=1)
     uint8_t lsm6dsl_ctrl3_cfg = 0x44;
     i2c_sens_write_reg(0x6A, 0x12, 1, &lsm6dsl_ctrl3_cfg, 1);
-    //HAL_StatusTypeDef act_status3 = HAL_I2C_Mem_Write(&hi2c2, 0xD4, 0x12, I2C_MEMADD_SIZE_8BIT, &lsm6dsl_ctrl3_cfg, 1, 100);
-    HAL_Delay(10);
-
+    tim2_delay_ms(20);
+    
     // Activate LSM6DSL: CTRL1_XL (0x10) = 0x40 (104Hz Output Data Rate, +/-2g range)
     uint8_t lsm6dsl_ctrl1_cfg = 0x40;
     i2c_sens_write_reg(0x6A, 0x10, 1, &lsm6dsl_ctrl1_cfg, 1);
-    //HAL_StatusTypeDef act_status4 = HAL_I2C_Mem_Write(&hi2c2, 0xD4, 0x10, I2C_MEMADD_SIZE_8BIT, &lsm6dsl_ctrl1_cfg, 1, 100);
-    HAL_Delay(20);
-
+    tim2_delay_ms(20);
 }
 
 void sensor_imu_read_bm(void)
