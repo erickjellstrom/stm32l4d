@@ -10,6 +10,8 @@
 #include "error_handler.h"
 #include "reset_handler.h"
 #include "sensor_handler.h"
+#include "sensor.h"
+#include "timer.h"
 
 //volatile uint8_t g_start = 0;
 
@@ -51,6 +53,7 @@ void app_init()
     gpio_led2_init();
     uart_init();
     i2c_init();
+    i2c_sens_init();
     rtc_set_time(30, 15, 3);
     tim2_init();
     adc_init();
@@ -59,6 +62,7 @@ void app_init()
     tim6_init();
     tim7_init();
     tim17_init();
+    sensor_temp_init_bm();
 }
 
 void app_standby()
@@ -87,6 +91,7 @@ void app_run()
     printf("app_run()\n");
 //    rtc_get_time(rtc_time);
 
+    sensor_temp_read_bm();
 //    g_temp = gpio_button_get();
 }
 

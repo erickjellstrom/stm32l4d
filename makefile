@@ -51,10 +51,12 @@ src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/mcal/timer.c \
 src/mcal/i2c.c \
+src/mcal/i2c_sens.c \
 src/mcal/adc.c \
 src/mcal/uart.c \
 src/mcal/gpio.c \
 src/ecal/pcf8563.c \
+src/ecal/sensor.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
 src/utils/random/random.c \
