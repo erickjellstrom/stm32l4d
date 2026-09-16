@@ -13,6 +13,7 @@
 #include "error_statemachine.h"
 #include "interrupts.h"
 
+/*
 float temperature_celsius;
 int16_t raw_x;
 int16_t raw_y;
@@ -21,6 +22,11 @@ int16_t raw_t;
 
 uint8_t accel_buffer[6] = {0};
 uint8_t temp_buffer[2] = {0};
+
+float accel_x_mg;
+float accel_y_mg;
+float accel_z_mg;
+*/
 
 int main(void) {
 

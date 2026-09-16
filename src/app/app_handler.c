@@ -94,6 +94,11 @@ void app_run()
 
     sensor_temp_read_bm();
     sensor_imu_read_bm();
+
+     // Stream them as simple, comma-separated integers
+    printf("%d,%d,%d\n", raw_x, raw_y, raw_z);
+
+
 //    g_temp = gpio_button_get();
 }
 

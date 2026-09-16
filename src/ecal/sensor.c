@@ -13,6 +13,9 @@ extern int16_t raw_t;
 extern uint8_t accel_buffer[];
 extern uint8_t temp_buffer[];
 
+extern float accel_x_mg;
+extern float accel_y_mg;
+extern float accel_z_mg;
 
 // Divide by 8.0f as specified by the HTS221 factory data datasheet
 static float T0_degC;
@@ -145,7 +148,7 @@ void sensor_imu_read_bm(void)
     raw_z = (int16_t)((accel_buffer[5] << 8) | accel_buffer[4]);
 
     // Convert the raw integers into physical milli-g units using the +/-2g sensitivity constant
-    float accel_x_mg = raw_x * 0.061f;
-    float accel_y_mg = raw_y * 0.061f;
-    float accel_z_mg = raw_z * 0.061f;
+    accel_x_mg = raw_x * 0.061f;
+    accel_y_mg = raw_y * 0.061f;
+    accel_z_mg = raw_z * 0.061f;
 }

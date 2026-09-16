@@ -15,4 +15,18 @@ extern volatile uint8_t gpio_d2;
 
 extern volatile uint8_t g_start;
 
+//imu
+extern float temperature_celsius;
+extern int16_t raw_x;
+extern int16_t raw_y;
+extern int16_t raw_z;
+extern int16_t raw_t;
+
+extern uint8_t accel_buffer[];
+extern uint8_t temp_buffer[];
+
+extern float accel_x_mg;
+extern float accel_y_mg;
+extern float accel_z_mg;
+
 #endif //DATA_H
