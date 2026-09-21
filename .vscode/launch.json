@@ -19,7 +19,9 @@
             "liveWatch": {
                 "enabled": true,
                 "samplesPerSecond": 4
-            }
+            },
+            // Add this to make sure OpenOCD binds the telnet server reliably
+            "serverArgs": ["-c", "telnet_port 4444"]
         }
     ]
 }

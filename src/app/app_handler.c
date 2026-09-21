@@ -98,6 +98,12 @@ void app_run()
      // Stream them as simple, comma-separated integers
     printf("%d,%d,%d\n", raw_x, raw_y, raw_z);
 
+   
+    
+    console_cmd = USART1_Read();
+    printf("console_cmd: %d\n", console_cmd);
+
+
 
 //    g_temp = gpio_button_get();
 }

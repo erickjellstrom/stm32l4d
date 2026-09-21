@@ -25,3 +25,18 @@ uint8_t temp_buffer[2] = {0};
 float accel_x_mg;
 float accel_y_mg;
 float accel_z_mg;
+
+//console
+uint8_t console_cmd;
+
+volatile uint8_t g_my_test_var = 0;
+
+__attribute__((section(".my_section"), used)) volatile PythonInputs_t g_board_inputs = {0};
+volatile uint32_t another_p = 75;
+
+//__attribute__((used)) uint16_t my_variable = 0;
+//__attribute__((section(".my_section"), used)) uint16_t my_variable = 0;
+
+__attribute__((section(".my_section"), used)) volatile uint16_t my_variable = 0;
+
+
