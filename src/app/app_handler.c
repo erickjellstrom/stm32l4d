@@ -54,7 +54,6 @@ void app_init()
     uart_init();
     i2c_init();
     i2c_sens_init();
-    rtc_set_time(30, 15, 3);
     tim2_init();
     adc_init();
     sensor_button_init();
@@ -64,6 +63,11 @@ void app_init()
     tim17_init();
     sensor_temp_init_bm();
     sensor_imu_init_bm();
+
+    #ifdef USE_HW_GPIO
+    rtc_set_time(30, 15, 3);
+    #endif
+
 }
 
 void app_standby()
@@ -76,6 +80,9 @@ void app_standby()
         // commenting this line out for debug purpose -> visability of state variables
 //        __WFI(); // CPU should sleep here and wait for interuppts
     }
+
+    console_cmd = USART1_Read();
+    printf("console_cmd: %d\n", console_cmd);
 
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
     NVIC_EnableIRQ(TIM7_IRQn);
@@ -97,14 +104,6 @@ void app_run()
 
      // Stream them as simple, comma-separated integers
     printf("%d,%d,%d\n", raw_x, raw_y, raw_z);
-
-   
-    
-    console_cmd = USART1_Read();
-    printf("console_cmd: %d\n", console_cmd);
-
-
-
 //    g_temp = gpio_button_get();
 }
 

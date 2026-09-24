@@ -26,17 +26,26 @@ float accel_x_mg;
 float accel_y_mg;
 float accel_z_mg;
 
-//console
-uint8_t console_cmd;
+// Variable controled by uart interface
+uint8_t console_cmd = 1;
 
-volatile uint8_t g_my_test_var = 0;
+//volatile uint8_t g_my_test_var = 0;
 
-__attribute__((section(".my_section"), used)) volatile PythonInputs_t g_board_inputs = {0};
-volatile uint32_t another_p = 75;
+// Variable controlled by gdb interface
+__attribute__((section(".my_section"), used)) 
+volatile PythonInputs_t g_board_inputs = {
+    .digital_switch_1  = 0,      // Initialized to 1
+    .digital_switch_2  = 1,      // Initialized to 0
+    .analog_slider_val = 3000,   // Initialized to 1500 (fits in uint16_t)
+    .state_machine_cmd = 2       // Initialized to 2
+};
+
+
+//volatile uint32_t another_p = 75;
 
 //__attribute__((used)) uint16_t my_variable = 0;
 //__attribute__((section(".my_section"), used)) uint16_t my_variable = 0;
 
-__attribute__((section(".my_section"), used)) volatile uint16_t my_variable = 0;
+//__attribute__((section(".my_section"), used)) volatile uint16_t my_variable = 0;
 
 

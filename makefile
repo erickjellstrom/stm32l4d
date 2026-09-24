@@ -10,6 +10,9 @@
 #   2015-07-22 - first version
 # ------------------------------------------------
 
+# Define the interface mode: HW (default) or GDB
+INTERFACE ?= HW
+
 ######################################
 # target
 ######################################
@@ -146,6 +149,12 @@ CFLAGS += -g
 # Generate dependency information
 #CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
+# Append the C preprocessor macro based on the selection
+ifeq ($(INTERFACE), GDB)
+    CFLAGS += -DUSE_GDB_INTERFACE
+else
+    CFLAGS += -DUSE_HW_GPIO
+endif
 
 #######################################
 # LDFLAGS

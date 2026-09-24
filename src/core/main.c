@@ -57,19 +57,9 @@ int main(void) {
     sensor_loop();
     error_loop();
 
-    printf("antother: %d\n", another_p);
-//    printf("my_variable: %d\n", my_variable);
+    while (console_cmd == 0) {}
 
-    
-    while (1) {
-        if (g_my_test_var == 5) {
-            // Place a breakpoint here later to prove GDB successfully modified it!
-            __NOP(); 
-        }
-    }
 
-    console_cmd = USART1_Read();
-    printf("console_cmd: %d\n", console_cmd);
     // Start timers IRQs
     irq_init();
 

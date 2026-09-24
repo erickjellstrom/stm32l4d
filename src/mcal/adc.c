@@ -1,5 +1,6 @@
 
 #include "adc.h"  
+#include "data.h"  
 
 void adc_init(void) {
     // =================================================================
@@ -88,6 +89,11 @@ void adc_init(void) {
 }
 
 uint32_t adc_read(void) {
+
+    #ifdef USE_GDB_INTERFACE
+    return g_board_inputs.analog_slider_val;  
+    #else
+    
     // Force a conversion start via software trigger
     ADC1->CR |= ADC_CR_ADSTART;
     
@@ -96,4 +102,8 @@ uint32_t adc_read(void) {
     
     // Read the Data Register. This memory read automatically wipes the EOC flag.
     return ADC1->DR;
+
+
+    #endif
+    
 }

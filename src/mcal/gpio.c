@@ -1,4 +1,5 @@
 #include "gpio.h"
+#include "data.h"
 
 
 void gpio_led2_init(void)
@@ -28,8 +29,12 @@ void gpio_d2_init(void)
 
 uint8_t gpio_d2_get(void)
 {
+    #ifdef USE_GDB_INTERFACE
+    return g_board_inputs.digital_switch_1;  
+    #else
     if (GPIOD->IDR & GPIO_IDR_ID14) return 1;
     else return 0;
+    #endif
 }
 
 void gpio_button_init(void) {
