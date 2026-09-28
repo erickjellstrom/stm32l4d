@@ -167,7 +167,23 @@ SECTIONS
 
 /* ... existing text and data sections ... */
 
-  /* Custom section for data that survives software reset */
+
+  /* JOHAN: place this below your standard .data or .bss sections ... */
+
+  .my_section : 
+  {
+    . = ALIGN(4);
+    _smy_section = .;        /* Create a global symbol for start of section in RAM */
+    KEEP(*(.my_section))     /* Force the linker to keep the variable */
+    . = ALIGN(4);
+    _emy_section = .;        /* Create a global symbol for end of section in RAM */
+  } >RAM AT> FLASH           /* Run in RAM, but load/store initial values in FLASH */
+
+  _smy_section_load = LOADADDR(.my_section); /* Symbol for the initial values in FLASH */
+
+
+
+  /* JOHAN: Custom section for data that survives software reset */
   .noinit (NOLOAD) :
   {
     . = ALIGN(4);

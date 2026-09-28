@@ -27,3 +27,10 @@ void uart_init(void)
     // E. Enable USART1, Transmitter (TE), and Receiver (RE)
     USART1->CR1 = USART_CR1_UE | USART_CR1_TE | USART_CR1_RE;
 }
+
+uint8_t USART1_Read(void)
+{
+    // Wait until Status Register shows Receive Data Register Not Empty (RXNE)
+    while (!(USART1->ISR & USART_ISR_RXNE));
+    return (uint8_t)(USART1->RDR & 0xFF);
+}

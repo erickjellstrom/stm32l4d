@@ -10,6 +10,9 @@
 #   2015-07-22 - first version
 # ------------------------------------------------
 
+# Define the interface mode: HW (default) or GDB
+INTERFACE ?= HW
+
 ######################################
 # target
 ######################################
@@ -51,10 +54,12 @@ src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/mcal/timer.c \
 src/mcal/i2c.c \
+src/mcal/i2c_sens.c \
 src/mcal/adc.c \
 src/mcal/uart.c \
 src/mcal/gpio.c \
 src/ecal/pcf8563.c \
+src/ecal/sensor.c \
 src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
 src/utils/random/random.c \
@@ -144,6 +149,12 @@ CFLAGS += -g
 # Generate dependency information
 #CFLAGS += -MMD -MP -MF"$(@:%.o=%.d)"
 
+# Append the C preprocessor macro based on the selection
+ifeq ($(INTERFACE), GDB)
+    CFLAGS += -DUSE_GDB_INTERFACE
+else
+    CFLAGS += -DUSE_HW_GPIO
+endif
 
 #######################################
 # LDFLAGS
