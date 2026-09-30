@@ -81,8 +81,8 @@ void app_standby()
 //        __WFI(); // CPU should sleep here and wait for interuppts
     }
 
-    console_cmd = USART1_Read();
-    printf("console_cmd: %d\n", console_cmd);
+//    console_cmd = USART1_Read();
+//    printf("console_cmd: %d\n", console_cmd);
 
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
     NVIC_EnableIRQ(TIM7_IRQn);
