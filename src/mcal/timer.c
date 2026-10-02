@@ -1,4 +1,5 @@
 #include "timer.h"
+#include "data.h"
 
 void tim17_init(void)
 {
@@ -70,9 +71,24 @@ void tim6_init(void)
 
 }
 
+void tim3_init(void)
+{
+    RCC->APB1ENR1 |= RCC_APB1ENR1_TIM3EN;
+
+    // 4 MHz / 4000 = 1 kHz; ARR=0 gives a 1 ms update period
+    TIM3->PSC = 3999;
+    TIM3->ARR = 9;
+    TIM3->DIER |= TIM_DIER_UIE;
+    TIM3->EGR |= TIM_EGR_UG;
+    TIM3->SR &= ~TIM_SR_UIF;
+    TIM3->CR1 |= TIM_CR1_CEN;
+}
+
 extern void app_loop(void);
 extern void error_loop(void);
 extern void sensor_loop(void);
+
+extern void log_sensor(void);
 
 void TIM1_TRG_COM_TIM17_IRQHandler(void)
 {
@@ -107,6 +123,19 @@ void TIM6_DAC_IRQHandler(void) {
         
         // Add your 100ms recurring user code here
         app_loop();
+    }
+}
+
+void TIM3_IRQHandler(void)
+{
+    if (TIM3->SR & TIM_SR_UIF) {
+        TIM3->SR &= ~TIM_SR_UIF;
+    }
+    
+    log_sensor();
+
+    if(log_counter >= 200) {
+        NVIC_DisableIRQ(TIM3_IRQn);
     }
 }
 
