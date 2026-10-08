@@ -52,8 +52,10 @@ void gpio_button_init(void) {
 
 uint8_t gpio_button_get(void)
 {
-    uint8_t ret = GPIOC->IDR;
-    ret = ret & GPIO_IDR_ID13;
+    uint8_t ret;
+
+//    uint8_t ret = GPIOC->IDR;
+//    ret = ret & GPIO_IDR_ID13;
 
     if (GPIOC->IDR & GPIO_IDR_ID13) {
         ret = 1;

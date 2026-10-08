@@ -12,6 +12,7 @@
 #include "sensor_handler.h"
 #include "sensor.h"
 #include "timer.h"
+#include "feat_imu_logger.h"
 
 //volatile uint8_t g_start = 0;
 
@@ -60,6 +61,7 @@ void app_init()
     gpio_d2_init();
     tim6_init();
     tim7_init();
+    tim3_init();
     tim17_init();
     sensor_temp_init_bm();
     sensor_imu_init_bm();
@@ -76,13 +78,15 @@ void app_standby()
     NVIC_DisableIRQ(TIM7_IRQn);
     NVIC_DisableIRQ(TIM1_TRG_COM_TIM17_IRQn);
 
+    printf("press blue button\n");
     while(!g_start) {
         // commenting this line out for debug purpose -> visability of state variables
 //        __WFI(); // CPU should sleep here and wait for interuppts
     }
+//    log_start_timer();
+//    log_start_button();
+    log_start();
 
-    console_cmd = USART1_Read();
-    printf("console_cmd: %d\n", console_cmd);
 
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
     NVIC_EnableIRQ(TIM7_IRQn);
@@ -103,7 +107,7 @@ void app_run()
     sensor_imu_read_bm();
 
      // Stream them as simple, comma-separated integers
-    printf("%d,%d,%d\n", raw_x, raw_y, raw_z);
+    printf("%d,%d,%d,%d\n", log_nbr, raw_x, raw_y, raw_z);
 //    g_temp = gpio_button_get();
 }
 

@@ -57,7 +57,7 @@ int main(void) {
     sensor_loop();
     error_loop();
 
-    while (console_cmd == 0) {}
+//    while (console_cmd == 0) {}
 
 
     // Start timers IRQs

@@ -40,7 +40,10 @@ volatile PythonInputs_t g_board_inputs = {
     .state_machine_cmd = 2       // Initialized to 2
 };
 
-
+// imu - uart - logger
+uint16_t log_counter;
+uint8_t letter_cmd;
+uint32_t log_nbr = 0;
 //volatile uint32_t another_p = 75;
 
 //__attribute__((used)) uint16_t my_variable = 0;

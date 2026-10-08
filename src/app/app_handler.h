@@ -11,4 +11,6 @@ void app_run();
 void app_error();
 void app_failures();
 
+void log_sensor();
+
 #endif //APP_H

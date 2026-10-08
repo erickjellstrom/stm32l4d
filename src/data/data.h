@@ -43,6 +43,10 @@ typedef struct {
 
 extern volatile PythonInputs_t g_board_inputs;
 
+extern uint16_t log_counter;
+
+extern uint8_t letter_cmd;
+extern uint32_t log_nbr;
 //extern volatile uint32_t another_p;
 
 //extern volatile uint16_t my_variable;

@@ -50,6 +50,7 @@ src/app/reset_handler.c \
 src/app/sensor_handler.c \
 src/app/error_statemachine.c \
 src/app/app_statemachine.c \
+src/app/feat_imu_logger.c \
 src/data/data.c \
 src/drivers/mcu/mcu.c \
 src/mcal/timer.c \

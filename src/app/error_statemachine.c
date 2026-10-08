@@ -4,7 +4,9 @@
 
 extern volatile uint8_t g_start;
 
-static void do_no_error(void) { printf("do_no_error(void)\n"); }
+static void do_no_error(void) {
+    // printf("do_no_error(void)\n");
+}
 static void do_ext_error(void) { printf("do_ext_error(void)\n"); }
 static void do_int_error(void) { 
     printf("do_int_error(void)\n");
