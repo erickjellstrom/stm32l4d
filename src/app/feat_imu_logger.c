@@ -2,6 +2,16 @@
 #include "stm32l475xx.h"
 #include "data.h"
 
+void print_imu()
+{
+    sensor_imu_read_bm();
+
+     // Stream them as simple, comma-separated integers
+    printf("%d,%d,%d,%d\n", log_nbr, raw_x, raw_y, raw_z);
+}
+/*
+Print out global variables
+*/
 void log_sensor()
 {
     sensor_imu_read_bm();

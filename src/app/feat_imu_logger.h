@@ -2,6 +2,7 @@
 #ifndef FEAT_IMU_LOGGER_H
 #define FEAT_IMU_LOGGER_H
 
+void print_imu();
 void log_sensor();
 void log_start_timer();
 void log_start();
