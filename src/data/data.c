@@ -29,8 +29,6 @@ float accel_z_mg;
 // Variable controled by uart interface
 uint8_t console_cmd = 1;
 
-//volatile uint8_t g_my_test_var = 0;
-
 // Variable controlled by gdb interface
 __attribute__((section(".my_section"), used)) 
 volatile PythonInputs_t g_board_inputs = {
@@ -44,11 +42,5 @@ volatile PythonInputs_t g_board_inputs = {
 uint16_t log_counter;
 uint8_t letter_cmd;
 uint32_t log_nbr = 0;
-//volatile uint32_t another_p = 75;
-
-//__attribute__((used)) uint16_t my_variable = 0;
-//__attribute__((section(".my_section"), used)) uint16_t my_variable = 0;
-
-//__attribute__((section(".my_section"), used)) volatile uint16_t my_variable = 0;
 
 

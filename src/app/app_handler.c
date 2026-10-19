@@ -14,7 +14,6 @@
 #include "timer.h"
 #include "feat_imu_logger.h"
 
-//volatile uint8_t g_start = 0;
 
 static app_cmd_t app_calc_input(void);
 
@@ -83,10 +82,8 @@ void app_standby()
         // commenting this line out for debug purpose -> visability of state variables
 //        __WFI(); // CPU should sleep here and wait for interuppts
     }
-//    log_start_timer();
-//    log_start_button();
-    log_start();
 
+    //log_start();
 
     NVIC_EnableIRQ(TIM6_DAC_IRQn);
     NVIC_EnableIRQ(TIM7_IRQn);
@@ -103,12 +100,8 @@ void app_run()
     printf("app_run()\n");
 //    rtc_get_time(rtc_time);
 
+    print_imu();
     sensor_temp_read_bm();
-    sensor_imu_read_bm();
-
-     // Stream them as simple, comma-separated integers
-    printf("%d,%d,%d,%d\n", log_nbr, raw_x, raw_y, raw_z);
-//    g_temp = gpio_button_get();
 }
 
 void app_error(void)
