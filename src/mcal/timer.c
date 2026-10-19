@@ -1,6 +1,13 @@
 #include "timer.h"
 #include "data.h"
 
+/*
+timer 17: 50ms
+timer 6: 100ms
+timer 3: 10ms
+timer 7: 100ms
+*/
+
 void tim17_init(void)
 {
     RCC->APB2ENR |= RCC_APB2ENR_TIM17EN;
@@ -75,7 +82,7 @@ void tim3_init(void)
 {
     RCC->APB1ENR1 |= RCC_APB1ENR1_TIM3EN;
 
-    // 4 MHz / 4000 = 1 kHz; ARR=0 gives a 1 ms update period
+    // 4 MHz / 4000 = 1 kHz; ARR=1 gives a 10 ms update period
     TIM3->PSC = 3999;
     TIM3->ARR = 9;
     TIM3->DIER |= TIM_DIER_UIE;
@@ -170,29 +177,3 @@ void tim2_delay_ms(uint32_t ms) {
         // Do nothing, just loop until time passes
     }
 }
-/*
-void init_timer1(void)
-{
-	volatile uint32_t dmy __attribute__ ((unused));
-	
-	RCC->APB2ENR |= RCC_APB2ENR_TIM1EN;
-	dmy = RCC->APB2ENR;
-
-	TIM1->PSC = (41999 & TIM_PSC_PSC); // 2000 Hz
-	TIM1->ARR = (1999 & 0xffff); // Timer1 = 1s
-	TIM1->DIER |= TIM_DIER_UIE;
-
-	__NVIC_EnableIRQ(TIM1_UP_TIM10_IRQn);
-	TIM1->CR1 |= TIM_CR1_CEN;
-}
-
-void timer1_delay(uint32_t ms)
-{
-	// Delay in number of timer ticks
-	uint32_t delay = (ms * 2) - 1;
-	uint32_t cnt = TIM1->CNT;
-	uint32_t cnt_limit = (cnt + delay) % TIM1->ARR;
-	printf("cnt: %d%tcnt_limit: %d\n", cnt, cnt_limit);
-	while (TIM1->CNT != cnt_limit) {};
-}
-*/
