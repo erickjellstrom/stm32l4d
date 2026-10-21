@@ -68,3 +68,15 @@ To make sure your active configurations match, could you tell me:
 
 
 git remote add origin git@github.com:username/repo-name.git
+
+
+
+Quick syntax options:
+
+If you are already on the main branch, you can make the command even shorter by omitting the final main:
+bash
+git branch -u origin/main
+
+Alternatively, you can fix the tracking while pushing or pulling by using:
+bash
+git pull origin main

@@ -47,7 +47,7 @@ int main(void) {
     irq_init();
 
     //Hand over full CPU control to the ThreadX RTOS kernel
-//    tx_kernel_enter();
+    tx_kernel_enter();
 
     while(1) {
         tim2_delay_ms(500);

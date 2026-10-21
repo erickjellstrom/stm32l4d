@@ -94,14 +94,14 @@ void app_run()
 {
 //    fifo_test();
 //    random_test();
-    gpio_led2_toggle();  
+//    gpio_led2_toggle();  
 
-    tim2_delay_ms(500);
-    printf("app_run()\n");
+    tim2_delay_ms(50);
+//    printf("app_run()\n");
 //    rtc_get_time(rtc_time);
 
-    print_imu();
-    sensor_temp_read_bm();
+//    print_imu();
+//    sensor_temp_read_bm();
 }
 
 void app_error(void)
