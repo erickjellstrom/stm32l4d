@@ -45,6 +45,7 @@ add_executable(${PROJECT_NAME}.elf
     src/app/error_statemachine.c
     src/app/app_statemachine.c
     src/app/feat_imu_logger.c
+    src/app/threads.c
     src/data/data.c
     src/drivers/mcu/mcu.c
     src/mcal/timer.c
