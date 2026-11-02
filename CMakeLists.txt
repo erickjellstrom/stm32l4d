@@ -60,7 +60,8 @@ add_executable(${PROJECT_NAME}.elf
     src/utils/fifo/fifo_test.c
     src/utils/random/random.c
     test/tests.c
-    src/threadx/app/tx_app.c
+    #src/threadx/app/tx_app.c 
+    src/app/tx_app_ticket_agent.c 
     # Assembly Sources
     startup_stm32l475xx.s
     src/core/tx_initialize_low_level.S

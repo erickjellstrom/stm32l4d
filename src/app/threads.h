@@ -1,6 +1,9 @@
 #ifndef THREADS_H
 #define THREADS_H
 
-void thread_msg_entry(void);
+#include "tx_api.h"
 
-#endif //THREADS_H 
+void thread_msg_entry(ULONG input);
+void thread_ticket_agent_entry(ULONG input);
+
+#endif //THREADS_H

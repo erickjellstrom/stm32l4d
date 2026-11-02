@@ -107,3 +107,16 @@ uint32_t adc_read(void) {
     #endif
     
 }
+
+uint32_t adc_read_noise(void) {
+
+    // Force a conversion start via software trigger
+    ADC1->CR |= ADC_CR_ADSTART;
+    
+    // Wait for the End of Conversion (EOC) flag to rise
+    while (!(ADC1->ISR & ADC_ISR_EOC));
+    
+    // Read the Data Register. This memory read automatically wipes the EOC flag.
+    return ADC1->DR;
+    
+}
