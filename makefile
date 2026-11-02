@@ -65,7 +65,9 @@ src/utils/fifo/fifo.c \
 src/utils/fifo/fifo_test.c \
 src/utils/random/random.c \
 test/tests.c \
-src/threadx/app/tx_app.c
+src/app/threads.c \
+src/threadx/app/tx_app_ticket_agent.c 
+#src/threadx/app/tx_app.c
 
 # ASM sources
 ASM_SOURCES =  \
