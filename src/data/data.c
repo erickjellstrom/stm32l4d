@@ -7,6 +7,8 @@ volatile uint8_t rtc_time[3];
 volatile uint32_t adc_raw_value;
 volatile float adc_input_voltage;
 
+volatile uint32_t adc_noise;
+
 //gpio
 volatile uint8_t gpio_d2;
 

@@ -1,7 +1,8 @@
 #include "main.h"
 #include "fifo_test.h"
 #include "tx_api.h"
-#include "tx_app.h"
+//#include "tx_app.h"
+#include "tx_app_ticket_agent.h"
 #include "tests.h"
 #include "rtc.h"
 #include "adc.h"
@@ -47,7 +48,7 @@ int main(void) {
     irq_init();
 
     //Hand over full CPU control to the ThreadX RTOS kernel
-//    tx_kernel_enter();
+    tx_kernel_enter();
 
     while(1) {
         tim2_delay_ms(500);

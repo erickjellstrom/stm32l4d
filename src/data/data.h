@@ -3,6 +3,7 @@
 
 #include <stdint.h>
 
+extern volatile uint32_t adc_noise;
 //adc
 extern volatile uint8_t rtc_time[3]; 
 
