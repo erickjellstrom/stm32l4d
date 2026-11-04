@@ -61,7 +61,9 @@ add_executable(${PROJECT_NAME}.elf
     src/utils/random/random.c
     test/tests.c
     #src/threadx/app/tx_app.c 
-    src/app/tx_app_ticket_agent.c 
+    #src/app/tx_app_ticket_agent.c 
+    src/app/tx_app_pls.c
+    src/app/tx_thread_pls.c
     # Assembly Sources
     startup_stm32l475xx.s
     src/core/tx_initialize_low_level.S

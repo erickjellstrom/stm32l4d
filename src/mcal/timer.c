@@ -169,11 +169,13 @@ void tim2_init(void) {
 }
 
 void tim2_delay_ms(uint32_t ms) {
+    uint32_t start = (uint32_t)TIM2->CNT;
+    
     // Reset the counter to 0 before starting the delay
-    TIM2->CNT = 0;
+   // TIM2->CNT = 0;
     
     // Wait until the counter reaches the desired millisecond value
-    while (TIM2->CNT < ms) {
+    while ( (TIM2->CNT - start) < ms) {
         // Do nothing, just loop until time passes
     }
 }
