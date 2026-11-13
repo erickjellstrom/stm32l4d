@@ -51,4 +51,8 @@ extern uint32_t log_nbr;
 //extern volatile uint32_t another_p;
 
 //extern volatile uint16_t my_variable;
+
+// threadx
+extern uint8_t mon_pls[5];
+
 #endif //DATA_H

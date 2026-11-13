@@ -14,3 +14,6 @@ cmake -B build -DINTERFACE=GDB
 
 # 2. Compile (CMake will automatically re-compile files affected by this macro change)
 cmake --build build
+
+# helped me once with a problem
+cmake --build build --clean-first

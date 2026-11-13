@@ -50,6 +50,7 @@ void app_init()
     reset_handler_init();
 
     // Initialize Peripherals
+    gpio_swo_init();
     gpio_led2_init();
     uart_init();
     i2c_init();
@@ -89,9 +90,29 @@ void app_standby()
     NVIC_EnableIRQ(TIM7_IRQn);
     NVIC_EnableIRQ(TIM1_TRG_COM_TIM17_IRQn);
 }
-
+/* Send 1-byte marker (0xaa = HIGH, 0xbb = LOW) to ITM Port 0 */
+static void ITM_SendMarker(uint8_t marker)
+{
+    if (((ITM->TCR & ITM_TCR_ITMENA_Msk) != 0UL) &&
+        ((ITM->TER & 1UL) != 0UL))
+    {
+        while (ITM->PORT[0].u32 == 0UL)
+        {
+            __NOP();
+        }
+        ITM->PORT[0].u8 = marker;
+    }
+}
 void app_run()
 {
+    
+    //ITM_SendMarker(0xaa); /* Channel 0 goes HIGH */
+    //for (volatile uint32_t i = 0; i < 100000; i++) { __NOP(); }
+
+    //ITM_SendMarker(0xbb); /* Channel 0 goes LOW */
+    //for (volatile uint32_t i = 0; i < 100000; i++) { __NOP(); }
+
+
 //    fifo_test();
 //    random_test();
 //    gpio_led2_toggle();  

@@ -2,6 +2,24 @@
 #include "data.h"
 
 
+void gpio_swo_init(void)
+{
+    /* 1. Enable GPIOB clock */
+    RCC->AHB2ENR |= RCC_AHB2ENR_GPIOBEN;
+    (void)RCC->AHB2ENR; /* Read-back delay */
+
+    /* 2. Set PB3 to Alternate Function mode (MODER[7:6] = 0b10) */
+    GPIOB->MODER &= ~GPIO_MODER_MODE3_Msk;
+    GPIOB->MODER |= GPIO_MODER_MODE3_1;
+
+    /* 3. Set PB3 Alternate Function to AF0 (SYS_AF / TRACESWO) */
+    GPIOB->AFR[0] &= ~GPIO_AFRL_AFSEL3_Msk;
+
+    /* 4. Set PB3 output speed to Very High for clean SWO edges */
+    GPIOB->OSPEEDR |= GPIO_OSPEEDR_OSPEED3_Msk;
+}
+
+
 void gpio_led2_init(void)
 {
     // Enable the clock for GPIOB

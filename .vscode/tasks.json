@@ -1,0 +1,21 @@
+
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "OpenOCD for MCUViewer",
+      "type": "shell",
+      "command": "openocd",
+      "args": [
+        "-f", "interface/stlink.cfg",
+        "-f", "target/stm32l4x.cfg",
+        "-c", "gdb_port 3333",
+        "-c", "tcl_port disabled",
+        "-c", "telnet_port 4445",
+        "-c", "stm32l4x.cpu configure -event gdb-detach {resume}"
+      ],
+      "isBackground": true,
+      "problemMatcher": []
+    }
+  ]
+}
