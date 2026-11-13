@@ -65,11 +65,12 @@ MCU = $(CPU) -mthumb $(FPU) $(FLOAT-ABI)
 
 # macros for gcc
 # AS defines
-AS_DEFS = 
+AS_DEFS = -DTX_ENABLE_EXECUTION_CHANGE_NOTIFY
 
 # C defines
 C_DEFS =  \
--DSTM32L475xx
+-DSTM32L475xx \
+-DTX_ENABLE_EXECUTION_CHANGE_NOTIFY
 
 
 # AS includes

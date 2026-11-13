@@ -1,6 +1,8 @@
 
 #include "stm32l475xx.h"
 
+void gpio_swo_init(void);
+
 void gpio_led2_init(void);
 
 static inline void gpio_led2_toggle(void) {

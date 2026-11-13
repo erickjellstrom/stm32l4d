@@ -45,4 +45,6 @@ uint16_t log_counter;
 uint8_t letter_cmd;
 uint32_t log_nbr = 0;
 
+// threadx
+uint8_t mon_pls[5];
 

@@ -11,6 +11,10 @@ if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Debug CACHE STRING "Choose the type of build" FORCE)
 endif()
 
+# Compile defintions (threadx for debugging) 
+add_compile_definitions(TX_ENABLE_EXECUTION_CHANGE_NOTIFY)
+
+
 # 3. Target MCU Compile Flags
 set(MCU_FLAGS
     -mcpu=cortex-m4
@@ -103,7 +107,7 @@ target_compile_options(${PROJECT_NAME}.elf PRIVATE ${COMMON_FLAGS})
 
 # 7. Linker Configurations
 set(LINKER_SCRIPT ${CMAKE_CURRENT_SOURCE_DIR}/STM32L475XX_FLASH.ld)
-set(THREADX_LIB ${CMAKE_CURRENT_SOURCE_DIR}/src/threadx/libthreadx.a)
+set(THREADX_LIB ${CMAKE_CURRENT_SOURCE_DIR}/src/threadx/build/libthreadx.a)
 
 target_link_options(${PROJECT_NAME}.elf PRIVATE
     ${MCU_FLAGS}
